@@ -48,4 +48,12 @@ export default class Color extends Vector3 {
         if (typeof number !== "number") throw new TypeError("Parameter 'number' is not number")
         if (number < 0 || number > 255) throw new RangeError("Parameter 'number' value is not between 0 and 255")
     }
+
+    toJSON() {
+        return {
+            r: this.r,
+            g: this.g,
+            b: this.b,
+        }
+    }
 }

@@ -21,13 +21,14 @@ scene.add(sphere1)
 scene.add(sphere2)
 scene.add(sphere3)
 
+console.log(scene.toJSON())
+
 canvas.clear()
 
 for (let x = -1 * canvas.width / 2; x < canvas.width / 2; x++) {
     for (let y = -1 * canvas.height / 2; y < canvas.height / 2; y++) {
         const D = viewport.fromCanvas(x, y, canvas)
         const color = rayTracer.trace(D)
-        console.log(color)
 
         canvas.putPixel(x, y, new Color(255, 0, 0))
     }

@@ -1,8 +1,8 @@
 import Color from "../math/Color.js"
 import Vector3 from "../math/Vector3.js"
-import Object3d from "./Object3d.js"
+import Object3D from "./Object3D.js"
 
-export default class Sphere extends Object3d {
+export default class Sphere extends Object3D {
     /** @private @type{number} */ #radius
     /** @private @type{Color} */ #color
 
@@ -35,5 +35,12 @@ export default class Sphere extends Object3d {
     set color(color) {
         if (!(color instanceof Color)) throw new TypeError("Parameter 'color' is not Color")
         this.#color = color
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            Color: this.color.toJSON()
+        }
     }
 }

@@ -1,6 +1,6 @@
-import Object3d from "./Object3d.js"
+import Object3D from "./Object3D.js"
 
-export default class Camera extends Object3d
+export default class Camera extends Object3D
 {
     /**
     * @param {Vector3} position

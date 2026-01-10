@@ -45,6 +45,14 @@ export default class Vector3 {
         return new Vector3(this.#x, this.#y, this.#z)
     }
 
+    toJSON() {
+        return {
+            x: this.x,
+            y: this.y,
+            z: this.z,
+        }
+    }
+
     /**
     * @param {number} number
     */

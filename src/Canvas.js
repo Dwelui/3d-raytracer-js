@@ -84,9 +84,11 @@ export default class Canvas {
     /**
     * @param {Viewport} viewport
     * @param {RayTracer} rayTracer
-    *
     */
     async rayTrace(viewport, rayTracer) {
+        if (!(viewport instanceof Viewport)) throw new TypeError("Parameter 'viewport' is not Viewport")
+        if (!(rayTracer instanceof RayTracer)) throw new TypeError("Parameter 'rayTracer' is not RayTracer")
+
         this.clear()
 
         for (let x = -this.width / 2; x < this.width / 2; x++) {

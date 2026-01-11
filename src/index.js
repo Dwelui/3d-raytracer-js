@@ -19,6 +19,12 @@ scene.add(sphere1)
 scene.add(sphere2)
 scene.add(sphere3)
 
-const canvas = new Canvas('#canvas', { width: 500, height: 500, backroundColor: new Color(255, 255, 255) })
+const canvas = new Canvas('#canvas', {
+    width: 500,
+    height: 500,
+    backroundColor: new Color(255, 255, 255),
+    rayTraceDrawMode: Canvas.RayTraceDrawMode.FASTEST
+})
+
 const rayTracer = new RayTracer(camera, scene, viewport.distanceToCamera, 100)
 canvas.rayTrace(viewport, rayTracer)

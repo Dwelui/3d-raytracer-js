@@ -54,6 +54,8 @@ export default class Vector3 {
     }
 
     /**
+    * Mutates vector
+    *
     * @param {number} number
     */
     divideScalar(number) {
@@ -64,6 +66,8 @@ export default class Vector3 {
     }
 
     /**
+    * Mutates vector
+    *
     * @param {number} number
     */
     multiplyScalar(number) {
@@ -74,6 +78,8 @@ export default class Vector3 {
     }
 
     /**
+    * Mutates vector
+    *
     * @param {Vector3} otherVector
     */
     add(otherVector) {
@@ -84,6 +90,8 @@ export default class Vector3 {
     }
 
     /**
+    * Mutates vector
+    *
     * @param {Vector3} otherVector
     */
     subtract(otherVector) {
@@ -94,10 +102,32 @@ export default class Vector3 {
     }
 
     /**
+    * @param {Vector3} a
+    * @param {Vector3} b
+    */
+    static subtract(a, b) {
+        if (!(a instanceof Vector3)) throw new TypeError("Parameter 'a' is not Vector3")
+        if (!(b instanceof Vector3)) throw new TypeError("Parameter 'b' is not Vector3")
+
+        return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z)
+    }
+
+    /**
     * @param {Vector3} otherVector
     */
     dot(otherVector) {
         return this.#x * otherVector.x + this.#y * otherVector.y + this.#z * otherVector.z
+    }
+
+    /**
+    * @param {Vector3} a
+    * @param {Vector3} b
+    */
+    static dot(a, b) {
+        if (!(a instanceof Vector3)) throw new TypeError("Parameter 'a' is not Vector3")
+        if (!(b instanceof Vector3)) throw new TypeError("Parameter 'b' is not Vector3")
+
+        return a.x * b.x + a.y * b.y + a.z * b.z
     }
 
     /**

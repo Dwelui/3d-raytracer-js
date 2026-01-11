@@ -7,7 +7,7 @@ export default class Color extends Vector3 {
     * @param {number} g - Must be between 0 and 255.
     * @param {number} b - Must be between 0 and 255.
     */
-    constructor(r, g, b) {
+    constructor(r = 0, g = 0, b = 0) {
         super(r, g, b)
 
         this.r = r

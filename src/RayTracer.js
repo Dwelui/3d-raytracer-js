@@ -46,11 +46,18 @@ export default class RayTracer {
             if (object instanceof Sphere) {
                 const isClosest = intersection =>
                     intersection !== null &&
-                    intersection >= this.#rayMin &&
+                    intersection > this.#rayMin &&
                     intersection <= this.#rayMax &&
                     intersection < closestIntersection
 
-                const [intersection1, intersection2] = this.#intersectSphere(viewportPoint, object)
+                /*
+                * t < 0 - Behind the camera.
+                * 0 <= t <= 1 - Between the camera and the viewport.
+                * t > 1 - Infront of the viewport.
+                */
+
+                const [intersection1, intersection2] = this.intersectRaySphere(viewportPoint, object)
+
                 if ((isClosest(intersection1))) {
                     closestIntersection = intersection1
                     closestObject = object
@@ -76,15 +83,19 @@ export default class RayTracer {
         }
     }
 
-    #intersectSphere(viewportPoint, sphere) {
-        if (!(viewportPoint instanceof Vector3)) throw new TypeError("Parameter 'viewportPoint' is not Vector3")
+    /**
+    * @param {Vector3} ray
+    * @param {Sphere} sphere
+    */
+    intersectRaySphere(ray, sphere) {
+        if (!(ray instanceof Vector3)) throw new TypeError("Parameter 'viewportPoint' is not Vector3")
         if (!(sphere instanceof Sphere)) throw new TypeError("Parameter 'sphere' is not Sphere")
 
-        const cameraToSphereCenter = this.#camera.position.clone().subtract(sphere.position)
+        const cameraToSphere = Vector3.subtract(this.#camera.position, sphere.position)
 
-        const a = viewportPoint.magnitude
-        const b = 2 * cameraToSphereCenter.clone().dot(viewportPoint)
-        const c = cameraToSphereCenter.magnitude - sphere.radius * sphere.radius
+        const a = Vector3.dot(ray, ray)
+        const b = 2 * Vector3.dot(cameraToSphere, ray)
+        const c = Vector3.dot(cameraToSphere, cameraToSphere) - sphere.radius * sphere.radius
 
         const discriminant = b * b - 4 * a * c
         if (discriminant < 0) {

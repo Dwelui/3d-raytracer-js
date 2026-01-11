@@ -1,0 +1,16 @@
+{
+  "name": "3d-raytracer",
+  "version": "1.0.0",
+  "description": "Naive implementation of 3d raytracer in js",
+  "keywords": [
+      "3d",
+      "raytracer"
+  ],
+  "license": "ISC",
+  "author": "Mantas Motuzas <mantas.motuzas41@gmail.com>",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

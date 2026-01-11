@@ -44,7 +44,11 @@ export default class RayTracer {
 
         for (const object of this.#scene.objects) {
             if (object instanceof Sphere) {
-                const isClosest = intersection => intersection >= this.#rayMin && intersection <= this.#rayMax && intersection < closestIntersection
+                const isClosest = intersection =>
+                    intersection !== null &&
+                    intersection >= this.#rayMin &&
+                    intersection <= this.#rayMax &&
+                    intersection < closestIntersection
 
                 const [intersection1, intersection2] = this.#intersectSphere(viewportPoint, object)
                 if ((isClosest(intersection1))) {
@@ -67,7 +71,7 @@ export default class RayTracer {
         if (closestObject instanceof Sphere) {
             return closestObject.color
         } else {
-            console.warn(`Object color not implemented ${closestObject.toJSON()}`)
+            console.warn(`Color for object not implemented ${closestObject.toJSON()}`)
             return null;
         }
     }
@@ -76,6 +80,20 @@ export default class RayTracer {
         if (!(viewportPoint instanceof Vector3)) throw new TypeError("Parameter 'viewportPoint' is not Vector3")
         if (!(sphere instanceof Sphere)) throw new TypeError("Parameter 'sphere' is not Sphere")
 
-        return []
+        const cameraToSphereCenter = this.#camera.position.clone().subtract(sphere.position)
+
+        const a = viewportPoint.magnitude
+        const b = 2 * cameraToSphereCenter.clone().dot(viewportPoint)
+        const c = cameraToSphereCenter.magnitude - sphere.radius * sphere.radius
+
+        const discriminant = b * b - 4 * a * c
+        if (discriminant < 0) {
+            return [null, null]
+        }
+
+        const t1 = (-b + Math.sqrt(discriminant)) / (2 * a)
+        const t2 = (-b - Math.sqrt(discriminant)) / (2 * a)
+
+        return [t1, t2]
     }
 }

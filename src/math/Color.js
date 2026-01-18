@@ -56,4 +56,11 @@ export default class Color extends Vector3 {
             b: this.b,
         }
     }
+
+    /** @param {Vector3} vector */
+    static fromVector3(vector) {
+        if (!(vector instanceof Vector3)) throw new TypeError("Parameter 'vector' is not Vector3")
+
+        return new Color(vector.x, vector.y, vector.z)
+    }
 }

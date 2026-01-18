@@ -58,23 +58,25 @@ export default class Vector3 {
     *
     * @param {number} number
     */
-    divideScalar(number) {
-        this.#x /= number
-        this.#y /= number
-        this.#z /= number
+    multiplyScalar(number) {
+        if (typeof number !== 'number') throw new TypeError("Parameter 'number' is not number")
+
+        this.#x *= number
+        this.#y *= number
+        this.#z *= number
+
         return this
     }
 
     /**
-    * Mutates vector
-    *
+    * @param {Vector3} Vector3
     * @param {number} number
     */
-    multiplyScalar(number) {
-        this.#x *= number
-        this.#y *= number
-        this.#z *= number
-        return this
+    static multiplyScalar(vector, number) {
+        if (!(vector instanceof Vector3)) throw new TypeError("Parameter 'vector' is not Vector3")
+        if (typeof number !== 'number') throw new TypeError("Parameter 'number' is not number")
+
+        return new Vector3(vector.x * number, vector.y * number, vector.z * number)
     }
 
     /**

@@ -1,3 +1,4 @@
+import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import Camera from "./object/Camera.js"
 import Scene from "./object/Scene.js"
@@ -76,7 +77,7 @@ export default class RayTracer {
         if (closestObject === null) return null
 
         if (closestObject instanceof Sphere) {
-            return closestObject.color
+            return Color.fromVector3(Vector3.multiplyScalar(closestObject.color, 0.2))
         } else {
             console.warn(`Color for object not implemented ${closestObject.toJSON()}`)
             return null;

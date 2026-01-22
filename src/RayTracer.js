@@ -2,6 +2,7 @@ import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
 import Camera from "./object/Camera.js"
+import DirectionalLight from "./object/DirectionalLight.js"
 import Light from "./object/Light.js"
 import PointLight from "./object/PointLight.js"
 import Scene from "./object/Scene.js"
@@ -148,6 +149,8 @@ export default class RayTracer {
                 result += light.intensity
             } else if (light instanceof PointLight) {
                 lightDirection = Vector3.subtract(light.position, intersectionPoint)
+            } else if (light instanceof DirectionalLight) {
+                lightDirection = light.direction.clone()
             }
 
             if (lightDirection) {

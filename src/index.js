@@ -3,6 +3,7 @@ import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
 import Camera from "./object/Camera.js"
+import DirectionalLight from "./object/DirectionalLight.js"
 import PointLight from "./object/PointLight.js"
 import Scene from "./object/Scene.js"
 import Sphere from "./object/Sphere.js"
@@ -19,6 +20,7 @@ const sphere4 = new Sphere(new Vector3(0, -5001, 0), 5000, new Color(255, 255, 0
 
 const ambientLight = new AmbientLight(0.2)
 const pointLight = new PointLight(new Vector3(2, 1, 0), 0.6)
+const directionalLight = new DirectionalLight(new Vector3(1, 4, 4), 0.2)
 
 const scene = new Scene()
 scene.add(sphere1)
@@ -27,6 +29,7 @@ scene.add(sphere3)
 scene.add(sphere4)
 scene.add(ambientLight)
 scene.add(pointLight)
+scene.add(directionalLight)
 
 const canvas = new Canvas('#canvas', {
     width: 500,

@@ -89,7 +89,7 @@ export default class RayTracer {
         if (closestObject instanceof Sphere) {
             const surfaceNormal = Vector3.subtract(intersectionPoint, closestObject.position).normalize()
 
-            const lightStrenght = this.calculateLightStrength(intersectionPoint, surfaceNormal)
+            const lightStrenght = this.calculateLightStrength(intersectionPoint, surfaceNormal, closestObject.specular, ray.clone().invert())
             if (lightStrenght < 0) {
                 throw new Error(`Light strenght is negative for object ${closestObject.toJSON()}`)
             }
@@ -129,8 +129,10 @@ export default class RayTracer {
     /**
     * @param {Vector3} intersectionPoint
     * @param {Vector3} surfaceNormal
+    * @param {Vector3} specularExponent
+    * @param {Vector3} viewVector - Vector from intersectionPoint to the Camera.
     */
-    calculateLightStrength(intersectionPoint, surfaceNormal) {
+    calculateLightStrength(intersectionPoint, surfaceNormal, specularExponent, viewVector) {
         if (!(intersectionPoint instanceof Vector3)) throw new TypeError("Parameter 'intersectionPoint' is not Vector3")
         if (!(surfaceNormal instanceof Vector3)) throw new TypeError("Parameter 'surfaceNormal' is not Vector3")
         if (Math.abs(surfaceNormal.magnitude - 1) > 1e-6) {
@@ -139,9 +141,12 @@ export default class RayTracer {
             );
         }
 
+        if (typeof specularExponent !== 'number') throw new TypeError("Parameter 'specularExponent' is not number")
+        if (!(viewVector instanceof Vector3)) throw new TypeError("Parameter 'viewVector' is not Vector3")
+
         let result = 0
 
-        let lightDirection = null;
+        let lightVector = null;
 
         const sceneLights = this.#scene.objects.filter(object => object instanceof Light)
         for (const light of sceneLights) {
@@ -149,15 +154,27 @@ export default class RayTracer {
                 result += light.intensity
                 continue
             } else if (light instanceof PointLight) {
-                lightDirection = Vector3.subtract(light.position, intersectionPoint)
+                lightVector = Vector3.subtract(light.position, intersectionPoint)
             } else if (light instanceof DirectionalLight) {
-                lightDirection = light.direction.clone()
+                lightVector = light.direction.clone()
             }
 
-            if (lightDirection) {
-                const dot = Vector3.dot(surfaceNormal, lightDirection)
+            // Calculate defuse surface.
+            if (lightVector) {
+                const dot = Vector3.dot(surfaceNormal, lightVector)
                 if (dot > 0) {
-                    result += light.intensity * dot / (surfaceNormal.magnitude * lightDirection.magnitude)
+                    result += light.intensity * dot / (surfaceNormal.magnitude * lightVector.magnitude)
+                }
+            }
+
+            // Calculate shiny surface.
+            if (specularExponent !== 0) {
+                const reflectionVector = surfaceNormal.clone().multiplyScalar(surfaceNormal.dot(lightVector) * 2).subtract(lightVector)
+                const reflectionDotView = Vector3.dot(reflectionVector, viewVector)
+                if (reflectionDotView > 0) {
+                    const reflectionAngleView = reflectionDotView / (reflectionVector.magnitude * viewVector.magnitude)
+                    const specularStrength = Math.pow(reflectionAngleView, specularExponent)
+                    result += light.intensity * specularStrength
                 }
             }
         }

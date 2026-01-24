@@ -153,4 +153,10 @@ export default class Vector3 {
             this.#x * otherVector.y - this.#y * otherVector.x,
         )
     }
+
+    invert() {
+        this.multiplyScalar(-1)
+
+        return this
+    }
 }

@@ -27,10 +27,9 @@ export default class RayTracer {
     * @param {number} intersectionMax - Must be positive.
     * @param {number} recursionDepth - Must be positive.
     */
-    traceRay(startingPoint, rayDirection, intersectionMin, intersectionMax, recursionDepth = 3) {
+    traceRay(startingPoint, rayDirection, intersectionMin, intersectionMax, recursionDepth) {
         if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
         if (typeof recursionDepth !== 'number') throw new TypeError("Parameter 'recursionDepth' is not number")
-        if (recursionDepth < 0) throw new RangeError("Parameter 'recursionDepth' is not positive")
 
         const { closestObject, closestIntersection } = this.closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax)
 
@@ -53,16 +52,19 @@ export default class RayTracer {
             console.warn(`Color for object not implemented ${closestObject.toJSON()}`)
         }
 
-        if (recursionDepth <= 0 && closestObject.reflective <= 0) {
+        if (recursionDepth <= 0 || closestObject.reflective <= 0) {
             return localColor
         }
 
         const reflectionDirection = this.reflectRay(rayDirection.clone().invert(), surfaceNormal)
         let reflectedColor = this.traceRay(intersectionPoint, reflectionDirection, 0.0001, intersectionMax, recursionDepth - 1)
+        if (reflectedColor === null) {
+            return localColor
+        }
 
         localColor.multiplyScalar(1 - closestObject.reflective)
         reflectedColor.multiplyScalar(closestObject.reflective)
-        return Color.add(localColor, reflectedColor)
+        return Color.fromVector3(Vector3.add(localColor, reflectedColor))
     }
 
     /**

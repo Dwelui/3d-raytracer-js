@@ -62,5 +62,5 @@ const canvas = new Canvas('#canvas', {
     rayTraceDrawMode: Canvas.RayTraceDrawMode.SLOW
 })
 
-const rayTracer = new RayTracer(camera, scene, viewport.distanceToCamera, 100)
+const rayTracer = new RayTracer(scene)
 canvas.rayTrace(viewport, rayTracer)

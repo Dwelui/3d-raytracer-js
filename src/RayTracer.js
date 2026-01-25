@@ -1,7 +1,6 @@
 import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
-import Camera from "./object/Camera.js"
 import DirectionalLight from "./object/DirectionalLight.js"
 import Light from "./object/Light.js"
 import PointLight from "./object/PointLight.js"
@@ -9,60 +8,61 @@ import Scene from "./object/Scene.js"
 import Sphere from "./object/Sphere.js"
 
 export default class RayTracer {
-    /** @private @type{Camera} */ #camera
     /** @private @type{Scene} */ #scene
-    /** @private @type{number} */ #rayMin
-    /** @private @type{number} */ #rayMax
 
     /**
-    * @param {Camera} camera
-    * @param {Scene} camera
-    * @param {number} rayMin - Must be positive.
-    * @param {number} rayMax - Must be larger than `rayMin`.
+    * @param {Scene} scene
     */
-    constructor(camera, scene, rayMin, rayMax) {
-        if (!(camera instanceof Camera)) throw new TypeError("Parameter 'camera' is not Camera")
-        this.#camera = camera
-
+    constructor(scene) {
         if (!(scene instanceof Scene)) throw new TypeError("Parameter 'scene' is not Scene")
         this.#scene = scene
-
-        if (typeof rayMin !== 'number') throw new TypeError("Parameter 'rayMin' is not number")
-        if (rayMin <= 0) throw new RangeError("Parameter 'rayMin' is not positive")
-        this.#rayMin = rayMin
-
-        if (typeof rayMax !== 'number') throw new TypeError("Parameter 'rayMax' is not number")
-        if (rayMax <= rayMin) throw new RangeError("Parameter 'rayMax' is not larger than 'rayMin'")
-        this.#rayMax = rayMax
     }
 
     /**
     * Calculates traced color for ray vector.
     *
+    * @param {Vector3} startingPoint
     * @param {Vector3} rayDirection
+    * @param {number} intersectionMin - Must be positive.
+    * @param {number} intersectionMax - Must be positive.
+    * @param {number} recursionDepth - Must be positive.
     */
-    traceRay(rayDirection) {
+    traceRay(startingPoint, rayDirection, intersectionMin, intersectionMax, recursionDepth = 3) {
         if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
+        if (typeof recursionDepth !== 'number') throw new TypeError("Parameter 'recursionDepth' is not number")
+        if (recursionDepth < 0) throw new RangeError("Parameter 'recursionDepth' is not positive")
 
-        const { closestObject, closestIntersection } = this.closestIntersection(this.#camera.position, rayDirection, this.#rayMin, this.#rayMax)
+        const { closestObject, closestIntersection } = this.closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax)
 
         if (closestObject === null) return null
 
-        const intersectionPoint = Vector3.add(this.#camera.position, Vector3.multiplyScalar(rayDirection, closestIntersection))
+        const intersectionPoint = Vector3.add(startingPoint, Vector3.multiplyScalar(rayDirection, closestIntersection))
 
+        let localColor = new Color()
+        let surfaceNormal = null
         if (closestObject instanceof Sphere) {
-            const surfaceNormal = Vector3.subtract(intersectionPoint, closestObject.position).normalize()
+            surfaceNormal = Vector3.subtract(intersectionPoint, closestObject.position).normalize()
 
-            const lightStrenght = this.calculateLightStrength(intersectionPoint, surfaceNormal, closestObject.specular, rayDirection.clone().invert())
+            const lightStrenght = this.calculateLightStrength(intersectionPoint, surfaceNormal, closestObject.specular, rayDirection.clone().invert(), intersectionMax)
             if (lightStrenght < 0) {
                 throw new Error(`Light strenght is negative for object ${closestObject.toJSON()}`)
             }
 
-            return Color.fromVector3(Vector3.multiplyScalar(closestObject.color, lightStrenght))
+            localColor = Color.fromVector3(Vector3.multiplyScalar(closestObject.color, lightStrenght))
         } else {
             console.warn(`Color for object not implemented ${closestObject.toJSON()}`)
-            return null;
         }
+
+        if (recursionDepth <= 0 && closestObject.reflective <= 0) {
+            return localColor
+        }
+
+        const reflectionDirection = this.reflectRay(rayDirection.clone().invert(), surfaceNormal)
+        let reflectedColor = this.traceRay(intersectionPoint, reflectionDirection, 0.0001, intersectionMax, recursionDepth - 1)
+
+        localColor.multiplyScalar(1 - closestObject.reflective)
+        reflectedColor.multiplyScalar(closestObject.reflective)
+        return Color.add(localColor, reflectedColor)
     }
 
     /**
@@ -141,12 +141,25 @@ export default class RayTracer {
     }
 
     /**
+    * @param {Vector3} rayDirection
+    * @param {Vector3} surfaceNormalDirection
+    */
+    reflectRay(rayDirection, surfaceNormalDirection) {
+        if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'rayDirection' is not Vector3")
+        if (!(surfaceNormalDirection instanceof Vector3)) throw new TypeError("Parameter 'surfaceNormalDirection' is not Vector3")
+
+        surfaceNormalDirection = surfaceNormalDirection.clone()
+
+        return surfaceNormalDirection.multiplyScalar(surfaceNormalDirection.dot(rayDirection) * 2).subtract(rayDirection)
+    }
+
+    /**
     * @param {Vector3} intersectionPoint
     * @param {Vector3} surfaceNormal
     * @param {Vector3} specularExponent
     * @param {Vector3} viewVector - Vector from intersectionPoint to the Camera.
     */
-    calculateLightStrength(intersectionPoint, surfaceNormal, specularExponent, viewVector) {
+    calculateLightStrength(intersectionPoint, surfaceNormal, specularExponent, viewVector, intersectionMax) {
         if (!(intersectionPoint instanceof Vector3)) throw new TypeError("Parameter 'intersectionPoint' is not Vector3")
         if (!(surfaceNormal instanceof Vector3)) throw new TypeError("Parameter 'surfaceNormal' is not Vector3")
         if (Math.abs(surfaceNormal.magnitude - 1) > 1e-6) {
@@ -173,7 +186,7 @@ export default class RayTracer {
             }
 
             // Shadow check
-            const { closestObject } = this.closestIntersection(intersectionPoint, lightDirection, 0.0001, this.#rayMax)
+            const { closestObject } = this.closestIntersection(intersectionPoint, lightDirection, 0.0001, intersectionMax)
             if (closestObject) {
                 continue;
             }
@@ -188,7 +201,7 @@ export default class RayTracer {
 
             // Calculate shiny surface.
             if (specularExponent !== 0) {
-                const reflectionVector = surfaceNormal.clone().multiplyScalar(surfaceNormal.dot(lightDirection) * 2).subtract(lightDirection)
+                const reflectionVector = this.reflectRay(lightDirection, surfaceNormal)
                 const reflectionDotView = Vector3.dot(reflectionVector, viewVector)
                 if (reflectionDotView > 0) {
                     const reflectionAngleView = reflectionDotView / (reflectionVector.magnitude * viewVector.magnitude)

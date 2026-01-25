@@ -88,8 +88,9 @@ export default class Canvas {
     * @param {RayTracer} rayTracer
     * @param {number} intersectionMin
     * @param {number} intersectionMax
+    * @param {number} recursionDepth
     */
-    async rayTrace(startPosition, viewport, rayTracer, intersectionMin, intersectionMax) {
+    async rayTrace(startPosition, viewport, rayTracer, intersectionMin, intersectionMax, recursionDepth) {
         if (!(viewport instanceof Viewport)) throw new TypeError("Parameter 'viewport' is not Viewport")
         if (!(rayTracer instanceof RayTracer)) throw new TypeError("Parameter 'rayTracer' is not RayTracer")
 
@@ -98,7 +99,7 @@ export default class Canvas {
         for (let x = -this.width / 2; x < this.width / 2; x++) {
             for (let y = -this.height / 2; y < this.height / 2; y++) {
                 const rayDirection = viewport.fromCanvas(x, y, this)
-                const color = rayTracer.traceRay(startPosition, rayDirection, intersectionMin, intersectionMax, 3) ?? this.backroundColor
+                const color = rayTracer.traceRay(startPosition, rayDirection, intersectionMin, intersectionMax, recursionDepth) ?? this.backroundColor
 
                 this.putPixel(x, y, color)
 

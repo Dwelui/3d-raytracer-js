@@ -63,4 +63,4 @@ const canvas = new Canvas('#canvas', {
 })
 
 const rayTracer = new RayTracer(scene)
-canvas.rayTrace(camera.position, viewport, rayTracer, viewport.distanceToCamera, 100)
+canvas.rayTrace(camera.position, viewport, rayTracer, viewport.distanceToCamera, 100, 1)

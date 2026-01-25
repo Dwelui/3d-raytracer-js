@@ -62,5 +62,11 @@ const canvas = new Canvas('#canvas', {
     rayTraceDrawMode: Canvas.RayTraceDrawMode.SLOW
 })
 
-const rayTracer = new RayTracer(scene)
-canvas.rayTrace(camera.position, viewport, rayTracer, viewport.distanceToCamera, 100, 1)
+canvas.rayTrace({
+    startPosition: camera.position,
+    viewport,
+    rayTracer: new RayTracer(scene),
+    intersectionMin: viewport.distanceToCamera,
+    intersectionMax: 100,
+    recursionDepth: 3
+})

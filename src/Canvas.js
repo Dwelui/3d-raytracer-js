@@ -1,3 +1,4 @@
+import { assertInstance, assertPositiveNumber } from "./Assert.js"
 import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import RayTracer from "./RayTracer.js"
@@ -83,29 +84,28 @@ export default class Canvas {
     }
 
     /**
-    * @param {Vector3} startPosition
-    * @param {Viewport} viewport
-    * @param {RayTracer} rayTracer
-    * @param {number} intersectionMin - Must be positive
-    * @param {number} intersectionMax - Must be positive
-    * @param {number} recursionDepth - Must be positive
-    */
-    async rayTrace(
-        startPosition,
-        viewport,
+     * @param {Object} args
+     * @param {RayTracer} args.rayTracer
+     * @param {Viewport} args.viewport
+     * @param {Vector3} args.startPosition
+     * @param {number} args.intersectionMin
+     * @param {number} args.intersectionMax
+     * @param {number} args.recursionDepth
+     */
+    async rayTrace({
         rayTracer,
+        viewport,
+        startPosition,
         intersectionMin,
         intersectionMax,
         recursionDepth
-    ) {
-        if (!(viewport instanceof Viewport)) throw new TypeError("Parameter 'viewport' is not Viewport")
-        if (!(rayTracer instanceof RayTracer)) throw new TypeError("Parameter 'rayTracer' is not RayTracer")
-        if (typeof intersectionMin !== 'number') throw new TypeError("Parameter 'intersectionMin' is not number")
-        if (intersectionMin < 0) throw new RangeError("Parameter 'intersectionMin' is not positive")
-        if (typeof intersectionMax !== 'number') throw new TypeError("Parameter 'intersectionMax' is not number")
-        if (intersectionMax < 0) throw new RangeError("Parameter 'intersectionMax' is not positive")
-        if (typeof recursionDepth !== 'number') throw new TypeError("Parameter 'recursionDepth' is not number")
-        if (recursionDepth < 0) throw new RangeError("Parameter 'recursionDepth' is not positive")
+    }) {
+        assertInstance(rayTracer, RayTracer, 'rayTracer')
+        assertInstance(viewport, Viewport, 'viewport')
+        assertInstance(startPosition, Vector3, 'startPosition')
+        assertPositiveNumber(intersectionMin, 'intersectionMin')
+        assertPositiveNumber(intersectionMax, 'intersectionMax')
+        assertPositiveNumber(recursionDepth, 'recursionDepth')
 
         this.clear()
 

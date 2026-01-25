@@ -57,14 +57,14 @@ export default class RayTracer {
         }
 
         const reflectionDirection = this.reflectRay(rayDirection.clone().invert(), surfaceNormal)
-        let reflectedColor = this.traceRay(intersectionPoint, reflectionDirection, 0.0001, intersectionMax, recursionDepth - 1)
-        if (reflectedColor === null) {
+        let reflectionColor = this.traceRay(intersectionPoint, reflectionDirection, 0.0001, intersectionMax, recursionDepth - 1)
+        if (reflectionColor === null) {
             return localColor
         }
 
         localColor.multiplyScalar(1 - closestObject.reflective)
-        reflectedColor.multiplyScalar(closestObject.reflective)
-        return Color.fromVector3(Vector3.add(localColor, reflectedColor))
+        reflectionColor.multiplyScalar(closestObject.reflective)
+        return Color.fromVector3(Vector3.add(localColor, reflectionColor))
     }
 
     /**

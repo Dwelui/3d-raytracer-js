@@ -29,7 +29,12 @@ export default class RayTracer {
     */
     traceRay(startingPoint, rayDirection, intersectionMin, intersectionMax, recursionDepth) {
         if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
+        if (typeof intersectionMin !== 'number') throw new TypeError("Parameter 'intersectionMin' is not number")
+        if (intersectionMin < 0) throw new RangeError("Parameter 'intersectionMin' is not positive")
+        if (typeof intersectionMax !== 'number') throw new TypeError("Parameter 'intersectionMax' is not number")
+        if (intersectionMax < 0) throw new RangeError("Parameter 'intersectionMax' is not positive")
         if (typeof recursionDepth !== 'number') throw new TypeError("Parameter 'recursionDepth' is not number")
+        if (recursionDepth < 0) throw new RangeError("Parameter 'recursionDepth' is not positive")
 
         const { closestObject, closestIntersection } = this.closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax)
 
@@ -69,14 +74,16 @@ export default class RayTracer {
 
     /**
     * @param {Vector3} rayDirection
-    * @param {number} intersectionMin
-    * @param {number} intersectionMax
+    * @param {number} intersectionMin - Must be positive.
+    * @param {number} intersectionMax - Must be positive.
     */
     closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax) {
         if (!(startingPoint instanceof Vector3)) throw new TypeError("Parameter 'startingPoint' is not Vector3")
         if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
         if (typeof intersectionMin !== 'number') throw new TypeError("Parameter 'intersectionMin' is not number")
+        if (intersectionMin < 0) throw new RangeError("Parameter 'intersectionMin' is not positive")
         if (typeof intersectionMax !== 'number') throw new TypeError("Parameter 'intersectionMax' is not number")
+        if (intersectionMax < 0) throw new RangeError("Parameter 'intersectionMax' is not positive")
 
         let closestIntersection = intersectionMax
         let closestObject = null
@@ -117,18 +124,18 @@ export default class RayTracer {
 
     /**
     * @param {Vector3} startingPoint
-    * @param {Vector3} ray
+    * @param {Vector3} rayDirection
     * @param {Sphere} sphere
     */
-    intersectRaySphere(startingPoint, ray, sphere) {
+    intersectRaySphere(startingPoint, rayDirection, sphere) {
         if (!(startingPoint instanceof Vector3)) throw new TypeError("Parameter 'startingPoint' is not Vector3")
-        if (!(ray instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
+        if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
         if (!(sphere instanceof Sphere)) throw new TypeError("Parameter 'sphere' is not Sphere")
 
         const cameraToSphere = Vector3.subtract(startingPoint, sphere.position)
 
-        const a = Vector3.dot(ray, ray)
-        const b = 2 * Vector3.dot(cameraToSphere, ray)
+        const a = Vector3.dot(rayDirection, rayDirection)
+        const b = 2 * Vector3.dot(cameraToSphere, rayDirection)
         const c = Vector3.dot(cameraToSphere, cameraToSphere) - sphere.radius * sphere.radius
 
         const discriminant = b * b - 4 * a * c

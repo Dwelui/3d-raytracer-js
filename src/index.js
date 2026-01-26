@@ -20,7 +20,6 @@ const sphere1 = new Sphere({
     specular: 200,
     reflective: 0.2,
 })
-
 const sphere2 = new Sphere({
     position: new Vector3(2, 0, 4),
     radius: 1,
@@ -28,7 +27,6 @@ const sphere2 = new Sphere({
     specular: 500,
     reflective: 0.3
 })
-
 const sphere3 = new Sphere({
     position: new Vector3(-2, 0, 4),
     radius: 1,
@@ -36,7 +34,6 @@ const sphere3 = new Sphere({
     specular: 0,
     reflective: 0.4
 })
-
 const sphere4 = new Sphere({
     position: new Vector3(0, -5001, 0),
     radius: 5000,
@@ -46,8 +43,14 @@ const sphere4 = new Sphere({
 })
 
 const ambientLight = new AmbientLight({ intensity: 0.2 })
-const pointLight = new PointLight({ position: new Vector3(2, 1, 0), intensity: 0.6})
-const directionalLight = new DirectionalLight({ direction: new Vector3(1, 4, 4), intensity: 0.2 })
+const pointLight = new PointLight({
+    position: new Vector3(2, 1, 0),
+    intensity: 0.6
+})
+const directionalLight = new DirectionalLight({
+    direction: new Vector3(1, 4, 4),
+    intensity: 0.2
+})
 
 const scene = new Scene()
 scene.add(sphere1)

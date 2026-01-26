@@ -1,3 +1,4 @@
+import { assertInstances, assertInstancesMapped, assertPositiveNumbers } from "./Assert.js"
 import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
@@ -14,7 +15,7 @@ export default class RayTracer {
     * @param {Scene} scene
     */
     constructor(scene) {
-        if (!(scene instanceof Scene)) throw new TypeError("Parameter 'scene' is not Scene")
+        assertInstancesMapped({scene})
         this.#scene = scene
     }
 
@@ -28,13 +29,8 @@ export default class RayTracer {
     * @param {number} recursionDepth - Must be positive.
     */
     traceRay(startingPoint, rayDirection, intersectionMin, intersectionMax, recursionDepth) {
-        if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
-        if (typeof intersectionMin !== 'number') throw new TypeError("Parameter 'intersectionMin' is not number")
-        if (intersectionMin < 0) throw new RangeError("Parameter 'intersectionMin' is not positive")
-        if (typeof intersectionMax !== 'number') throw new TypeError("Parameter 'intersectionMax' is not number")
-        if (intersectionMax < 0) throw new RangeError("Parameter 'intersectionMax' is not positive")
-        if (typeof recursionDepth !== 'number') throw new TypeError("Parameter 'recursionDepth' is not number")
-        if (recursionDepth < 0) throw new RangeError("Parameter 'recursionDepth' is not positive")
+        assertInstances({startingPoint, rayDirection}, Vector3)
+        assertPositiveNumbers({intersectionMin, intersectionMax, recursionDepth})
 
         const { closestObject, closestIntersection } = this.closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax)
 
@@ -78,12 +74,8 @@ export default class RayTracer {
     * @param {number} intersectionMax - Must be positive.
     */
     closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax) {
-        if (!(startingPoint instanceof Vector3)) throw new TypeError("Parameter 'startingPoint' is not Vector3")
-        if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
-        if (typeof intersectionMin !== 'number') throw new TypeError("Parameter 'intersectionMin' is not number")
-        if (intersectionMin < 0) throw new RangeError("Parameter 'intersectionMin' is not positive")
-        if (typeof intersectionMax !== 'number') throw new TypeError("Parameter 'intersectionMax' is not number")
-        if (intersectionMax < 0) throw new RangeError("Parameter 'intersectionMax' is not positive")
+        assertInstances({startingPoint, rayDirection}, Vector3)
+        assertPositiveNumbers({intersectionMin, intersectionMax})
 
         let closestIntersection = intersectionMax
         let closestObject = null
@@ -128,9 +120,8 @@ export default class RayTracer {
     * @param {Sphere} sphere
     */
     intersectRaySphere(startingPoint, rayDirection, sphere) {
-        if (!(startingPoint instanceof Vector3)) throw new TypeError("Parameter 'startingPoint' is not Vector3")
-        if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'ray' is not Vector3")
-        if (!(sphere instanceof Sphere)) throw new TypeError("Parameter 'sphere' is not Sphere")
+        assertInstances({startingPoint, rayDirection}, Vector3)
+        assertInstances({sphere}, Sphere)
 
         const cameraToSphere = Vector3.subtract(startingPoint, sphere.position)
 
@@ -154,8 +145,7 @@ export default class RayTracer {
     * @param {Vector3} surfaceNormalDirection
     */
     reflectRay(rayDirection, surfaceNormalDirection) {
-        if (!(rayDirection instanceof Vector3)) throw new TypeError("Parameter 'rayDirection' is not Vector3")
-        if (!(surfaceNormalDirection instanceof Vector3)) throw new TypeError("Parameter 'surfaceNormalDirection' is not Vector3")
+        assertInstances({rayDirection, surfaceNormalDirection}, Vector3)
 
         surfaceNormalDirection = surfaceNormalDirection.clone()
 
@@ -165,19 +155,19 @@ export default class RayTracer {
     /**
     * @param {Vector3} intersectionPoint
     * @param {Vector3} surfaceNormal
-    * @param {Vector3} specularExponent
+    * @param {number} specularExponent - Must be positive.
     * @param {Vector3} viewVector - Vector from intersectionPoint to the Camera.
+    * @param {number} intersectionMax - Must be positive.
     */
     calculateLightStrength(intersectionPoint, surfaceNormal, specularExponent, viewVector, intersectionMax) {
-        if (!(intersectionPoint instanceof Vector3)) throw new TypeError("Parameter 'intersectionPoint' is not Vector3")
-        if (!(surfaceNormal instanceof Vector3)) throw new TypeError("Parameter 'surfaceNormal' is not Vector3")
+        assertInstances({intersectionPoint, surfaceNormal, viewVector}, Vector3)
+        assertPositiveNumbers({specularExponent, intersectionMax})
+
         if (Math.abs(surfaceNormal.magnitude - 1) > 1e-6) {
             throw new Error(
                 `Parameter 'surfaceNormal' is not normalized ${surfaceNormal.magnitude}`
             );
         }
-        if (typeof specularExponent !== 'number') throw new TypeError("Parameter 'specularExponent' is not number")
-        if (!(viewVector instanceof Vector3)) throw new TypeError("Parameter 'viewVector' is not Vector3")
 
         let result = 0
 

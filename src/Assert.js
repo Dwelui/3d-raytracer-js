@@ -1,5 +1,6 @@
 import Canvas from "./Canvas.js"
 import Color from "./math/Color.js"
+import Vector3 from "./math/Vector3.js"
 import Object3D from "./object/Object3D.js"
 import Scene from "./object/Scene.js"
 import RayTracer from "./RayTracer.js"
@@ -12,6 +13,8 @@ const instancesMap = {
     object3D: () => Object3D,
     scene: () => Scene,
     canvas: () => Canvas,
+    vector: () => Vector3,
+    vector3: () => Vector3,
 }
 
 /** @param {Object.<string, Object>} instances */

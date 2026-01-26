@@ -1,3 +1,5 @@
+import { assertInstances, assertInstancesMapped, assertNumbers } from "../Assert.js"
+
 export default class Vector3 {
     /** @protected @type{number} */ #x
     /** @protected @type{number} */ #y
@@ -10,29 +12,16 @@ export default class Vector3 {
     }
 
     get x() { return this.#x }
-    set x(number) {
-        this.#validate(number)
-        this.#x = number
-    }
+    set x(number) { assertNumbers({number}); this.#x = number }
 
     get y() { return this.#y }
-    set y(number) {
-        this.#validate(number)
-        this.#y = number
-    }
+    set y(number) { assertNumbers({number}); this.#y = number }
 
     get z() { return this.#z }
-    set z(number) {
-        this.#validate(number)
-        this.#z = number
-    }
+    set z(number) { assertNumbers({number}); this.#z = number }
 
     get magnitude() {
         return Math.sqrt(this.#x * this.#x + this.#y * this.#y + this.#z * this.#z)
-    }
-
-    #validate(number) {
-        if (typeof number !== "number") throw new TypeError("Parameter 'number' must be a number")
     }
 
     normalize() {
@@ -59,7 +48,7 @@ export default class Vector3 {
     * @param {number} number
     */
     multiplyScalar(number) {
-        if (typeof number !== 'number') throw new TypeError("Parameter 'number' is not number")
+        assertNumbers({number})
 
         this.#x *= number
         this.#y *= number
@@ -69,25 +58,58 @@ export default class Vector3 {
     }
 
     /**
-    * @param {Vector3} Vector3
-    * @param {number} number
+    * Mutates vector
+    *
+    * @param {Vector3} vector
     */
-    static multiplyScalar(vector, number) {
-        if (!(vector instanceof Vector3)) throw new TypeError("Parameter 'vector' is not Vector3")
-        if (typeof number !== 'number') throw new TypeError("Parameter 'number' is not number")
+    add(vector) {
+        assertInstancesMapped({vector})
 
-        return new Vector3(vector.x * number, vector.y * number, vector.z * number)
+        this.#x += vector.x
+        this.#y += vector.y
+        this.#z += vector.z
+
+        return this
     }
 
     /**
     * Mutates vector
     *
-    * @param {Vector3} otherVector
+    * @param {Vector3} vector
     */
-    add(otherVector) {
-        this.#x += otherVector.x
-        this.#y += otherVector.y
-        this.#z += otherVector.z
+    subtract(vector) {
+        assertInstancesMapped({vector})
+
+        this.#x -= vector.x
+        this.#y -= vector.y
+        this.#z -= vector.z
+
+        return this
+    }
+
+    /** @param {Vector3} vector */
+    dot(vector) {
+        assertInstancesMapped({vector})
+
+        return this.#x * vector.x + this.#y * vector.y + this.#z * vector.z
+    }
+
+    /**
+    * @param {Vector3} vector
+    */
+    cross(vector) {
+        assertInstancesMapped({vector})
+
+        return new Vector3(
+            this.#y * vector.z - this.#z * vector.y,
+            this.#z * vector.x - this.#x * vector.z,
+            this.#x * vector.y - this.#y * vector.x,
+        )
+    }
+
+    invert() {
+        this.multiplyScalar(-1)
+
         return this
     }
 
@@ -96,22 +118,20 @@ export default class Vector3 {
     * @param {Vector3} b
     */
     static add(a, b) {
-        if (!(a instanceof Vector3)) throw new TypeError("Parameter 'a' is not Vector3")
-        if (!(b instanceof Vector3)) throw new TypeError("Parameter 'b' is not Vector3")
+        assertInstances({a, b}, Vector3)
 
         return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z)
     }
 
     /**
-    * Mutates vector
-    *
-    * @param {Vector3} otherVector
+    * @param {Vector3} Vector3
+    * @param {number} number
     */
-    subtract(otherVector) {
-        this.#x -= otherVector.x
-        this.#y -= otherVector.y
-        this.#z -= otherVector.z
-        return this
+    static multiplyScalar(vector, number) {
+        assertInstancesMapped({vector})
+        assertNumbers({number})
+
+        return new Vector3(vector.x * number, vector.y * number, vector.z * number)
     }
 
     /**
@@ -119,17 +139,9 @@ export default class Vector3 {
     * @param {Vector3} b
     */
     static subtract(a, b) {
-        if (!(a instanceof Vector3)) throw new TypeError("Parameter 'a' is not Vector3")
-        if (!(b instanceof Vector3)) throw new TypeError("Parameter 'b' is not Vector3")
+        assertInstances({a, b}, Vector3)
 
         return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z)
-    }
-
-    /**
-    * @param {Vector3} otherVector
-    */
-    dot(otherVector) {
-        return this.#x * otherVector.x + this.#y * otherVector.y + this.#z * otherVector.z
     }
 
     /**
@@ -137,26 +149,8 @@ export default class Vector3 {
     * @param {Vector3} b
     */
     static dot(a, b) {
-        if (!(a instanceof Vector3)) throw new TypeError("Parameter 'a' is not Vector3")
-        if (!(b instanceof Vector3)) throw new TypeError("Parameter 'b' is not Vector3")
+        assertInstances({a, b}, Vector3)
 
         return a.x * b.x + a.y * b.y + a.z * b.z
-    }
-
-    /**
-    * @param {Vector3} otherVector
-    */
-    cross(otherVector) {
-        return new Vector3(
-            this.#y * otherVector.z - this.#z * otherVector.y,
-            this.#z * otherVector.x - this.#x * otherVector.z,
-            this.#x * otherVector.y - this.#y * otherVector.x,
-        )
-    }
-
-    invert() {
-        this.multiplyScalar(-1)
-
-        return this
     }
 }

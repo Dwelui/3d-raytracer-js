@@ -1,3 +1,4 @@
+import { assertInstancesMapped, assertNumbersBetween } from "../Assert.js";
 import Vector3 from "./Vector3.js";
 
 export default class Color extends Vector3 {
@@ -16,28 +17,16 @@ export default class Color extends Vector3 {
     }
 
     get r() { return super.x }
-
     /** @param {number} number - Must be between 0 and 255. */
-    set r(number) {
-        this.#validate(number)
-        super.x = number
-    }
+    set r(number) { assertNumbersBetween({number}, 0, 255); super.x = number }
 
     get g() { return super.y }
-
     /** @param {number} number - Must be between 0 and 255. */
-    set g(number) {
-        this.#validate(number)
-        super.y = number
-    }
+    set g(number) { assertNumbersBetween({number}, 0, 255); super.y = number }
 
     get b() { return super.z }
-
     /** @param {number} number - Must be between 0 and 255. */
-    set b(number) {
-        this.#validate(number)
-        super.z = number
-    }
+    set b(number) { assertNumbersBetween({number}, 0, 255); super.z = number }
 
     get hex() {
         const toHex = v =>
@@ -46,11 +35,6 @@ export default class Color extends Vector3 {
                 .padStart(2, "0")
 
         return `#${toHex(this.r)}${toHex(this.g)}${toHex(this.b)}`
-    }
-
-    #validate(number) {
-        if (typeof number !== "number") throw new TypeError("Parameter 'number' is not number")
-        if (number < 0 || number > 255) throw new RangeError("Parameter 'number' value is not between 0 and 255")
     }
 
     toJSON() {
@@ -63,7 +47,7 @@ export default class Color extends Vector3 {
 
     /** @param {Vector3} vector */
     static fromVector3(vector) {
-        if (!(vector instanceof Vector3)) throw new TypeError("Parameter 'vector' is not Vector3")
+        assertInstancesMapped({vector})
 
         const clamp = number => {
             number = number > 255 ? 255 : number

@@ -1,4 +1,4 @@
-import { assertInstance, assertPositiveNumber } from "./Assert.js"
+import { assertInstance, assertInstancesMapped, assertNumbers, assertObjects, assertPositiveNumbers, assertStrings } from "./Assert.js"
 import Color from "./math/Color.js"
 import Vector3 from "./math/Vector3.js"
 import RayTracer from "./RayTracer.js"
@@ -28,7 +28,7 @@ export default class Canvas {
     * @param {CanvasOptions} options
     */
     constructor(querySelector, options) {
-        if (typeof querySelector !== 'string') throw new TypeError("Parameter 'querySelector' is not string")
+        assertStrings({querySelector})
 
         this.#canvas = document.querySelector(querySelector)
         if (this.#canvas === null) throw new Error("Canvas element not found")
@@ -36,7 +36,7 @@ export default class Canvas {
         this.#context = this.#canvas.getContext('2d')
         if (this.#canvas === null) throw new Error("Context not found")
 
-        if (typeof options !== 'object') throw new TypeError("Parameter 'options' is not object")
+        assertObjects({options})
 
         this.backroundColor = options.backroundColor ?? new Color()
         this.rayTraceDrawMode = options.rayTraceDrawMode ?? Canvas.RayTraceDrawMode.FASTEST
@@ -46,7 +46,7 @@ export default class Canvas {
 
     get backroundColor() { return this.#options.backroundColor }
     set backroundColor(color) {
-        if (!(color instanceof Color)) throw new TypeError("Parameter 'color' is not Color")
+        assertInstancesMapped({color})
 
         this.#options.backroundColor = color
     }
@@ -63,7 +63,7 @@ export default class Canvas {
     get width() { return this.#options.width }
     /** @param {number} pixels - Must be positive */
     set width(pixels) {
-        this.#validateDimension(pixels)
+        assertPositiveNumbers({pixels})
 
         this.#options.width = pixels
         this.#canvas.width = pixels
@@ -72,15 +72,10 @@ export default class Canvas {
     get height() { return this.#options.height }
     /** @param {number} pixels - Must be positive */
     set height(pixels) {
-        this.#validateDimension(pixels)
+        assertPositiveNumbers({pixels})
 
         this.#options.height = pixels
         this.#canvas.height = pixels
-    }
-
-    #validateDimension(pixels) {
-        if (typeof pixels !== 'number') throw new TypeError("Parameter 'pixels' is not number")
-        if (pixels <= 0) throw new RangeError("Parameter 'pixels' is negative or zero")
     }
 
     /**
@@ -100,12 +95,9 @@ export default class Canvas {
         intersectionMax,
         recursionDepth
     }) {
-        assertInstance(rayTracer, RayTracer, 'rayTracer')
-        assertInstance(viewport, Viewport, 'viewport')
+        assertInstancesMapped({rayTracer, viewport})
         assertInstance(startPosition, Vector3, 'startPosition')
-        assertPositiveNumber(intersectionMin, 'intersectionMin')
-        assertPositiveNumber(intersectionMax, 'intersectionMax')
-        assertPositiveNumber(recursionDepth, 'recursionDepth')
+        assertPositiveNumbers({intersectionMin, intersectionMax, recursionDepth})
 
         this.clear()
 
@@ -139,9 +131,8 @@ export default class Canvas {
     * @param {Color} color
     */
     putPixel(x, y, color) {
-        if (typeof x !== 'number') throw new TypeError("Parameter 'x' is not number")
-        if (typeof y !== 'number') throw new TypeError("Parameter 'y' is not number")
-        if (!(color instanceof Color)) throw new TypeError("Parameter 'color' is not Color")
+        assertNumbers({x, y})
+        assertInstancesMapped({color})
 
         x += this.width / 2
         y = this.height / 2 - y

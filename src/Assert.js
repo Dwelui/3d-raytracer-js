@@ -35,7 +35,7 @@ export function assertInstance(value, targetInstance, name) {
 export function assertPositiveNumber(value, name) {
     assertNumber(value, name)
 
-    if (value <= 0) {
+    if (value < 0) {
         throw new RangeError(`Parameter '${name}' must be positive`)
     }
 }
@@ -51,6 +51,33 @@ export function assertPositiveNumbers(numbers) {
 export function assertNumbers(numbers) {
     for (const [name, value] of Object.entries(numbers)) {
         assertNumber(value, name)
+    }
+}
+
+/**
+* @param {Object.<string, number>} numbers
+* @param {number} from
+* @param {number} till
+*/
+export function assertNumbersBetween(numbers, from, till) {
+    for (const [name, value] of Object.entries(numbers)) {
+        assertNumberBetween(value, name, from, till)
+    }
+}
+
+/**
+* @param {number} value
+* @param {string} name
+* @param {number} from
+* @param {number} till
+*/
+export function assertNumberBetween(value, name, from, till) {
+    if (typeof value !== 'number') {
+        throw new TypeError(`Parameter '${name}' is not number`)
+    }
+
+    if (value < from || value > till) {
+        throw new RangeError(`Parameter '${name}' is not between ${from} and ${till}`)
     }
 }
 

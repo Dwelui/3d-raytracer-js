@@ -17,8 +17,20 @@ const instancesMap = {
     vector3: () => Vector3,
 }
 
+let enabled = true
+
+export function enableAsserts() {
+    enabled = true
+}
+
+export function disableAsserts() {
+    enabled = false
+}
+
 /** @param {Object.<string, Object>} instances */
 export function assertInstancesMapped(instances) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(instances)) {
         const instanceClass = instancesMap[name]?.()
 
@@ -31,6 +43,8 @@ export function assertInstancesMapped(instances) {
 * @param {Object} targetInstance
 */
 export function assertInstances(instances, targetInstance) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(instances)) {
         assertInstance(value, targetInstance, name)
     }
@@ -41,6 +55,8 @@ export function assertInstances(instances, targetInstance) {
 * @param {Object} targetInstance
 */
 export function assertInstancesNullable(instances, targetInstance) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(instances)) {
         assertInstanceNullable(value, targetInstance, name)
     }
@@ -84,6 +100,8 @@ function assertPositiveNumber(value, name) {
 
 /** @param {Object.<string, number>} numbers */
 export function assertPositiveNumbers(numbers) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(numbers)) {
         assertPositiveNumber(value, name)
     }
@@ -91,6 +109,8 @@ export function assertPositiveNumbers(numbers) {
 
 /** @param {Object.<string, number>} numbers */
 export function assertNumbers(numbers) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(numbers)) {
         assertNumber(value, name)
     }
@@ -102,6 +122,8 @@ export function assertNumbers(numbers) {
 * @param {number} till
 */
 export function assertNumbersBetween(numbers, from, till) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(numbers)) {
         assertNumberBetween(value, name, from, till)
     }
@@ -114,6 +136,8 @@ export function assertNumbersBetween(numbers, from, till) {
 * @param {number} till
 */
 export function assertNumberBetween(value, name, from, till) {
+    if (!enabled) return
+
     if (typeof value !== 'number') {
         throw new TypeError(`Parameter '${name}' is not number`)
     }
@@ -135,6 +159,8 @@ function assertNumber(value, name) {
 
 /** @param {Object.<string, string>} strings */
 export function assertStrings(strings) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(strings)) {
         assertString(value, name)
     }
@@ -152,6 +178,8 @@ function assertString(value, name) {
 
 /** @param {Object.<string, Object>} objects */
 export function assertObjects(objects) {
+    if (!enabled) return
+
     for (const [name, value] of Object.entries(objects)) {
         assertObject(value, name)
     }
@@ -161,7 +189,7 @@ export function assertObjects(objects) {
 * @param {Object} value
 * @param {string} name
 */
-export function assertObject(value, name) {
+function assertObject(value, name) {
     if (typeof value !== 'object') {
         throw new TypeError(`Parameter '${name}' is not object`)
     }

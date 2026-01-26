@@ -28,7 +28,7 @@ export default class Canvas {
     * @param {CanvasOptions} options
     */
     constructor(querySelector, options) {
-        assertStrings({querySelector})
+        assertStrings({ querySelector })
 
         this.#canvas = document.querySelector(querySelector)
         if (this.#canvas === null) throw new Error("Canvas element not found")
@@ -36,7 +36,7 @@ export default class Canvas {
         this.#context = this.#canvas.getContext('2d')
         if (this.#canvas === null) throw new Error("Context not found")
 
-        assertObjects({options})
+        assertObjects({ options })
 
         this.backroundColor = options.backroundColor ?? new Color()
         this.rayTraceDrawMode = options.rayTraceDrawMode ?? Canvas.RayTraceDrawMode.FASTEST
@@ -46,7 +46,7 @@ export default class Canvas {
 
     get backroundColor() { return this.#options.backroundColor }
     set backroundColor(color) {
-        assertInstancesMapped({color})
+        assertInstancesMapped({ color })
 
         this.#options.backroundColor = color
     }
@@ -63,7 +63,7 @@ export default class Canvas {
     get width() { return this.#options.width }
     /** @param {number} pixels - Must be positive */
     set width(pixels) {
-        assertPositiveNumbers({pixels})
+        assertPositiveNumbers({ pixels })
 
         this.#options.width = pixels
         this.#canvas.width = pixels
@@ -72,7 +72,7 @@ export default class Canvas {
     get height() { return this.#options.height }
     /** @param {number} pixels - Must be positive */
     set height(pixels) {
-        assertPositiveNumbers({pixels})
+        assertPositiveNumbers({ pixels })
 
         this.#options.height = pixels
         this.#canvas.height = pixels
@@ -95,11 +95,13 @@ export default class Canvas {
         intersectionMax,
         recursionDepth
     }) {
-        assertInstancesMapped({rayTracer, viewport})
-        assertInstances({startPosition}, Vector3)
-        assertPositiveNumbers({intersectionMin, intersectionMax, recursionDepth})
+        assertInstancesMapped({ rayTracer, viewport })
+        assertInstances({ startPosition }, Vector3)
+        assertPositiveNumbers({ intersectionMin, intersectionMax, recursionDepth })
 
         this.clear()
+
+        const start = performance.now()
 
         for (let x = -this.width / 2; x < this.width / 2; x++) {
             for (let y = -this.height / 2; y < this.height / 2; y++) {
@@ -123,6 +125,8 @@ export default class Canvas {
                 await new Promise(requestAnimationFrame)
             }
         }
+
+        console.log((performance.now() - start) / 1000)
     }
 
     /**
@@ -131,8 +135,8 @@ export default class Canvas {
     * @param {Color} color
     */
     putPixel(x, y, color) {
-        assertNumbers({x, y})
-        assertInstancesMapped({color})
+        assertNumbers({ x, y })
+        assertInstancesMapped({ color })
 
         x += this.width / 2
         y = this.height / 2 - y

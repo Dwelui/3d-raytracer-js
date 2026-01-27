@@ -1,4 +1,4 @@
-import { assertArrays, assertInstancesMapped, assertNumbers, assertNumbersBetween } from "../Assert.js"
+import { assertArrays, assertInstances, assertInstancesMapped, assertNumbers, assertNumbersBetween } from "../Assert.js"
 import Vector3 from "./Vector3.js"
 
 export default class Matrix3 {
@@ -61,25 +61,6 @@ export default class Matrix3 {
         }
     }
 
-    /** @param {Matrix3} matrix */
-    multiplyMatrix3(matrix) {
-        assertInstancesMapped({ matrix })
-
-        return new Matrix3([
-            this.get(0) * matrix.get(0) + this.get(1) * matrix.get(3) + this.get(2) * matrix.get(6),
-            this.get(0) * matrix.get(1) + this.get(1) * matrix.get(4) + this.get(2) * matrix.get(7),
-            this.get(0) * matrix.get(2) + this.get(1) * matrix.get(5) + this.get(2) * matrix.get(8),
-
-            this.get(3) * matrix.get(0) + this.get(4) * matrix.get(3) + this.get(5) * matrix.get(6),
-            this.get(3) * matrix.get(1) + this.get(4) * matrix.get(4) + this.get(5) * matrix.get(7),
-            this.get(3) * matrix.get(2) + this.get(4) * matrix.get(5) + this.get(5) * matrix.get(8),
-
-            this.get(6) * matrix.get(0) + this.get(7) * matrix.get(3) + this.get(8) * matrix.get(6),
-            this.get(6) * matrix.get(1) + this.get(7) * matrix.get(4) + this.get(8) * matrix.get(7),
-            this.get(6) * matrix.get(2) + this.get(7) * matrix.get(5) + this.get(8) * matrix.get(8),
-        ])
-    }
-
     static zero() {
         return new Matrix3([
             0, 0, 0,
@@ -93,6 +74,28 @@ export default class Matrix3 {
             1, 0, 0,
             0, 1, 0,
             0, 0, 1,
+        ])
+    }
+
+    /**
+    * @param {Matrix3} a
+    * @param {Matrix3} b
+    */
+    static multiplyMatrix3(a, b) {
+        assertInstances({ a, b }, Matrix3)
+
+        return new Matrix3([
+            a.get(0) * b.get(0) + a.get(1) * b.get(3) + a.get(2) * b.get(6),
+            a.get(0) * b.get(1) + a.get(1) * b.get(4) + a.get(2) * b.get(7),
+            a.get(0) * b.get(2) + a.get(1) * b.get(5) + a.get(2) * b.get(8),
+
+            a.get(3) * b.get(0) + a.get(4) * b.get(3) + a.get(5) * b.get(6),
+            a.get(3) * b.get(1) + a.get(4) * b.get(4) + a.get(5) * b.get(7),
+            a.get(3) * b.get(2) + a.get(4) * b.get(5) + a.get(5) * b.get(8),
+
+            a.get(6) * b.get(0) + a.get(7) * b.get(3) + a.get(8) * b.get(6),
+            a.get(6) * b.get(1) + a.get(7) * b.get(4) + a.get(8) * b.get(7),
+            a.get(6) * b.get(2) + a.get(7) * b.get(5) + a.get(8) * b.get(8),
         ])
     }
 

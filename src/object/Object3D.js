@@ -1,4 +1,4 @@
-import { assertInstances } from "../Assert.js";
+import { assertInstances, assertNumbers } from "../Assert.js";
 import Matrix3 from "../math/Matrix3.js";
 import Vector3 from "../math/Vector3.js";
 
@@ -29,17 +29,54 @@ export default class Object3D {
         }
     }
 
-    /**
-    * @param {number} angle - In degress.
-    */
-    rotateX(angle) {
-        const cos = Math.cos(angle)
-        const sin = Math.sin(angle)
+    /** @param {number} degress */
+    rotateX(degress) {
+        assertNumbers({ degress })
 
-        this.rotation.multiplyMatrix3(new Matrix3([
+        const radians = degress * Math.PI / 180
+        const cos = Math.cos(radians)
+        const sin = Math.sin(radians)
+
+        const rotationMatrix = new Matrix3([
+            1, 0, 0,
+            0, cos, -1 * sin,
+            0, sin, cos
+        ])
+
+        this.rotation = Matrix3.multiplyMatrix3(this.rotation, rotationMatrix)
+    }
+
+    /** @param {number} degress */
+    rotateY(degress) {
+        assertNumbers({ degress })
+
+        const radians = degress * Math.PI / 180
+        const cos = Math.cos(radians)
+        const sin = Math.sin(radians)
+
+        const rotationMatrix = new Matrix3([
+            cos, 0, sin,
+            0, 1, 0,
+            -1 * sin, 0, cos
+        ])
+
+        this.rotation = Matrix3.multiplyMatrix3(this.rotation, rotationMatrix)
+    }
+
+    /** @param {number} degress */
+    rotateZ(degress) {
+        assertNumbers({ degress })
+
+        const radians = degress * Math.PI / 180
+        const cos = Math.cos(radians)
+        const sin = Math.sin(radians)
+
+        const rotationMatrix = new Matrix3([
             cos, -1 * sin, 0,
             sin, cos, 0,
-            0, 0, 0
-        ]))
+            0, 0, 1
+        ])
+
+        this.rotation = Matrix3.multiplyMatrix3(this.rotation, rotationMatrix)
     }
 }

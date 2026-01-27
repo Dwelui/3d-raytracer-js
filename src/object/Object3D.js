@@ -29,6 +29,27 @@ export default class Object3D {
         }
     }
 
+    /** @param {number} units */
+    translateX(units) {
+        assertNumbers({ units })
+
+        this.position.x += units
+    }
+
+    /** @param {number} units */
+    translateY(units) {
+        assertNumbers({ units })
+
+        this.position.y += units
+    }
+
+    /** @param {number} units */
+    translateZ(units) {
+        assertNumbers({ units })
+
+        this.position.z += units
+    }
+
     /** @param {number} degress */
     rotateX(degress) {
         assertNumbers({ degress })

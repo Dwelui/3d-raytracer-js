@@ -27,41 +27,71 @@ export default class Matrix3 {
     }
 
     /**
-    * @param {number} index - Number between 0 and 8.
+    * @overload
+    * @param {number} row - Number between 0 and 2.
+    * @param {number} col - Number between 0 and 2.
     */
-    get(index) { assertNumbersBetween({ index }, 0, 8); return this.#components[index] }
 
     /**
+    * @overload
+    * @param {number} index - Number between 0 and 8.
+    */
+
+    /** @param {...number} args */
+    get(...args) {
+        let index = null
+
+        if (args.length === 1) {
+            index = args[0]
+            assertNumbersBetween({ index }, 0, 8)
+        } else if (args.length === 2) {
+            const [row, col] = args
+            assertNumbersBetween({ row, col }, 0, 2)
+
+            index = row * 3 + col
+        } else {
+            throw new Error(`Bad '..args' parameters ${args}`)
+        }
+
+        return this.#components[index]
+    }
+
+    /**
+    * @overload
+    * @param {number} row - Number between 0 and 2.
+    * @param {number} col - Number between 0 and 2.
+    * @param {number} value
+    */
+
+    /**
+    * @overload
     * @param {number} index - Number between 0 and 8.
     * @param {number} value
     */
-    set(index, value) {
-        assertNumbersBetween({ index }, 0, 8)
-        assertNumbers({ value })
+
+    /** @param {...number} args */
+    set(...args) {
+        let index = null
+        let value = null
+
+        if (args.length == 2) {
+            [index, value] = args
+
+            assertNumbersBetween({ index }, 0, 8)
+            assertNumbers({ value })
+
+        } else if (args.length === 3) {
+            const [row, col] = args
+            index = row * 3 + col
+            value = args[2]
+
+            assertNumbersBetween({ row, col }, 0, 2)
+            assertNumbers({ value })
+        } else {
+            throw new Error(`Bad '..args' parameters ${args}`)
+        }
 
         this.#components[index] = value
-    }
-
-    /**
-    * @param {number} row - Number between 0 and 2.
-    * @param {number} col - Number between 0 and 2.
-    */
-    getAt(row, col) {
-        assertNumbersBetween({ row, col }, 0, 2)
-
-        return this.#components[row * 3 + col]
-    }
-
-    /**
-    * @param {number} row - Number between 0 and 2.
-    * @param {number} col - Number between 0 and 2.
-    * @param {number} value
-    */
-    setAt(row, col, value) {
-        assertNumbersBetween({ row, col }, 0, 2)
-        assertNumbers({ value })
-
-        this.#components[row * 3 + col] = value
     }
 
     toJSON() {

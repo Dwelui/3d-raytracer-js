@@ -29,32 +29,18 @@ export default class Color extends Vector3 {
     set b(number) { assertNumbersBetween({number}, 0, 255); super.z = number }
 
     get hex() {
-        const toHex = v =>
-            Math.round(v)
-                .toString(16)
-                .padStart(2, "0")
+        /** @type {(value: number) => string} */
+        const toHex = value => Math.round(value).toString(16).padStart(2, "0")
 
         return `#${toHex(this.r)}${toHex(this.g)}${toHex(this.b)}`
-    }
-
-    toJSON() {
-        return {
-            r: this.r,
-            g: this.g,
-            b: this.b,
-        }
     }
 
     /** @param {Vector3} vector */
     static fromVector3(vector) {
         assertInstancesMapped({vector})
 
-        const clamp = number => {
-            number = number > 255 ? 255 : number
-            number = number < 0 ? 0 : number
-
-            return number
-        }
+        /** @type {(value: number) => number} */
+        const clamp = value => value < 0 ? 0 : value > 255 ? 255 : value
 
         return new Color(clamp(vector.x), clamp(vector.y), clamp(vector.z))
     }

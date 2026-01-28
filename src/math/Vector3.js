@@ -1,9 +1,9 @@
 import { assertInstances, assertInstancesMapped, assertNumbers } from "../Assert.js"
 
 export default class Vector3 {
-    /** @protected @type{number} */ #x
-    /** @protected @type{number} */ #y
-    /** @protected @type{number} */ #z
+    /** @type{number} */ #x
+    /** @type{number} */ #y
+    /** @type{number} */ #z
 
     constructor(x = 0, y = 0, z = 0) {
         this.x = x
@@ -12,13 +12,13 @@ export default class Vector3 {
     }
 
     get x() { return this.#x }
-    set x(number) { assertNumbers({number}); this.#x = number }
+    set x(number) { assertNumbers({ number }); this.#x = number }
 
     get y() { return this.#y }
-    set y(number) { assertNumbers({number}); this.#y = number }
+    set y(number) { assertNumbers({ number }); this.#y = number }
 
     get z() { return this.#z }
-    set z(number) { assertNumbers({number}); this.#z = number }
+    set z(number) { assertNumbers({ number }); this.#z = number }
 
     get magnitude() { return Math.sqrt(this.#x * this.#x + this.#y * this.#y + this.#z * this.#z) }
 
@@ -53,7 +53,7 @@ export default class Vector3 {
     * @param {number} number
     */
     multiplyScalar(number) {
-        assertNumbers({number})
+        assertNumbers({ number })
 
         this.#x *= number
         this.#y *= number
@@ -68,7 +68,7 @@ export default class Vector3 {
     * @param {Vector3} vector
     */
     add(vector) {
-        assertInstancesMapped({vector})
+        assertInstancesMapped({ vector })
 
         this.#x += vector.x
         this.#y += vector.y
@@ -83,7 +83,7 @@ export default class Vector3 {
     * @param {Vector3} vector
     */
     subtract(vector) {
-        assertInstancesMapped({vector})
+        assertInstancesMapped({ vector })
 
         this.#x -= vector.x
         this.#y -= vector.y
@@ -94,7 +94,7 @@ export default class Vector3 {
 
     /** @param {Vector3} vector */
     dot(vector) {
-        assertInstancesMapped({vector})
+        assertInstancesMapped({ vector })
 
         return this.#x * vector.x + this.#y * vector.y + this.#z * vector.z
     }
@@ -103,7 +103,7 @@ export default class Vector3 {
     * @param {Vector3} vector
     */
     cross(vector) {
-        assertInstancesMapped({vector})
+        assertInstancesMapped({ vector })
 
         return new Vector3(
             this.#y * vector.z - this.#z * vector.y,
@@ -117,18 +117,18 @@ export default class Vector3 {
     * @param {Vector3} b
     */
     static add(a, b) {
-        assertInstances({a, b}, Vector3)
+        assertInstances({ a, b }, Vector3)
 
         return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z)
     }
 
     /**
-    * @param {Vector3} Vector3
+    * @param {Vector3} vector
     * @param {number} number
     */
     static multiplyScalar(vector, number) {
-        assertInstancesMapped({vector})
-        assertNumbers({number})
+        assertInstancesMapped({ vector })
+        assertNumbers({ number })
 
         return new Vector3(vector.x * number, vector.y * number, vector.z * number)
     }
@@ -138,7 +138,7 @@ export default class Vector3 {
     * @param {Vector3} b
     */
     static subtract(a, b) {
-        assertInstances({a, b}, Vector3)
+        assertInstances({ a, b }, Vector3)
 
         return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z)
     }
@@ -148,7 +148,7 @@ export default class Vector3 {
     * @param {Vector3} b
     */
     static dot(a, b) {
-        assertInstances({a, b}, Vector3)
+        assertInstances({ a, b }, Vector3)
 
         return a.x * b.x + a.y * b.y + a.z * b.z
     }

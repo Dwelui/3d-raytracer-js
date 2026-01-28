@@ -2,7 +2,7 @@ import { assertInstances, assertInstancesMapped, assertNumbers, assertNumbersBet
 import Vector3 from "./Vector3.js"
 
 export default class Matrix3 {
-    /** @private @type{Array<number>} */ #components
+    /** @type{Array<number>} */ #components
 
     /** @param {Array<number> | Array<Vector3>} [components] */
     constructor(components) {
@@ -30,11 +30,13 @@ export default class Matrix3 {
     * @overload
     * @param {number} row - Number between 0 and 2.
     * @param {number} col - Number between 0 and 2.
+    * @return {number}
     */
 
     /**
     * @overload
     * @param {number} index - Number between 0 and 8.
+    * @return {number}
     */
 
     /** @param {...number} args */
@@ -61,12 +63,14 @@ export default class Matrix3 {
     * @param {number} row - Number between 0 and 2.
     * @param {number} col - Number between 0 and 2.
     * @param {number} value
+    * @return {void}
     */
 
     /**
     * @overload
     * @param {number} index - Number between 0 and 8.
     * @param {number} value
+    * @return {void}
     */
 
     /** @param {...number} args */

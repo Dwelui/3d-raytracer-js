@@ -31,21 +31,21 @@ export default class Scene extends Object3D {
 
     /**
     * @param {{
-    *   positionJSON: Object,
-    *   rotationJSON: Array<number> | Array<Vector3> | undefined
-    *   objectsJSON: Array<{
-    *      positionJSON: Object,
-    *      rotationJSON: Array<number> | Array<Vector3> | undefined
+    *   Position: Object,
+    *   Rotation: Array<number> | Array<Vector3> | undefined
+    *   Objects3D: Array<{
+    *      Position: Object,
+    *      Rotation: Array<number> | Array<Vector3> | undefined
     *    }> | undefined
     * }} abject
     */
-    static fromJSON({ positionJSON, objectsJSON }) {
+    static fromJSON({ Position, Objects3D }) {
         const scene = new Scene({
-            position: Vector3.fromJSON(positionJSON)
+            position: Vector3.fromJSON(Position)
         })
 
-        if (objectsJSON) {
-            for (const objectJSON of objectsJSON) {
+        if (Objects3D) {
+            for (const objectJSON of Objects3D) {
                 scene.add(Object3D.fromJSON(objectJSON))
             }
         }

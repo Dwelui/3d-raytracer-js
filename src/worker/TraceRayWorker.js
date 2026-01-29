@@ -6,8 +6,7 @@ onmessage = (e) => {
     assertObjects({ sceneJSON })
 
     const scene = Scene.fromJSON(sceneJSON)
-
-    console.log(scene)
+    
 
     postMessage('test')
 }

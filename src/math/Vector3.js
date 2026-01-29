@@ -45,13 +45,14 @@ export default class Vector3 {
         }
     }
 
-    /** @param {{
+    /**
+    * @param {{
     *       x?: number,
     *       y?: number,
     *       z?: number,
-    *   }} object
+    *   }} [object]
     */
-    static fromJSON({ x, y, z }) {
+    static fromJSON({ x, y, z } = {}) {
         assertNumbersUndefined({ x, y, z })
 
         return new Vector3(x, y, z)

@@ -31,14 +31,14 @@ export default class Object3D {
 
     /**
     * @param {{
-    *   positionJSON: Object,
-    *   rotationJSON: Array<number> | Array<Vector3> | undefined
+    *   Position: Object,
+    *   Rotation: Array<number> | Array<Vector3> | undefined
     * }} abject
     */
-    static fromJSON({ positionJSON, rotationJSON }) {
+    static fromJSON({ Position, Rotation }) {
         return new Object3D({
-            position: Vector3.fromJSON(positionJSON),
-            rotation: Matrix3.fromJSON(rotationJSON)
+            position: Vector3.fromJSON(Position),
+            rotation: Matrix3.fromJSON(Rotation)
         })
     }
 

@@ -112,8 +112,8 @@ export default class Matrix3 {
         }
     }
 
-    /** @param {Array<number> | Array<Vector3> | undefined} object */
-    static fromJSON(object) { return new Matrix3(object) }
+    /** @param {Record<string, number> | undefined} object */
+    static fromJSON(object) { return new Matrix3(object ? Object.values(object) : object) }
 
     toArray() {
         return [

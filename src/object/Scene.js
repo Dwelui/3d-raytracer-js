@@ -1,6 +1,9 @@
 import { assertInstancesMapped, assertInstancesNullable } from "../Assert.js"
 import Vector3 from "../math/Vector3.js"
+import AmbientLight from "./AmbientLight.js"
+import DirectionalLight from "./DirectionalLight.js"
 import Object3D from "./Object3D.js"
+import PointLight from "./PointLight.js"
 import Sphere from "./Sphere.js"
 
 export default class Scene extends Object3D {
@@ -47,6 +50,12 @@ export default class Scene extends Object3D {
                 console.log(objectJSON)
                 if (objectJSON.type === "Sphere") {
                     scene.add(Sphere.fromJSON(objectJSON))
+                } else if (objectJSON.type === "AmbientLight") {
+                    scene.add(AmbientLight.fromJSON(objectJSON))
+                } else if (objectJSON.type === "PointLight") {
+                    scene.add(PointLight.fromJSON(objectJSON))
+                } else if (objectJSON.type === "DirectionalLight") {
+                    scene.add(DirectionalLight.fromJSON(objectJSON))
                 }
             }
         }

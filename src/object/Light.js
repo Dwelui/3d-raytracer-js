@@ -1,8 +1,11 @@
 import { assertNumbersBetween } from "../Assert.js"
+import Matrix3 from "../math/Matrix3.js"
 import Vector3 from "../math/Vector3.js"
 import Object3D from "./Object3D.js"
 
 export default class Light extends Object3D {
+    /** @type {string} */ type = "Light"
+
     /** @type{number} */ #intensity
 
     /**
@@ -18,4 +21,26 @@ export default class Light extends Object3D {
 
     get intensity() { return this.#intensity }
     set intensity(intensity) { assertNumbersBetween({intensity}, 0, 1); this.#intensity = intensity }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            Intensity: this.intensity
+        }
+    }
+
+    /**
+    * @param {{
+    *   Position: Object,
+    *   Rotation: Array<number> | Array<Vector3> | undefined
+    *   Intensity: number
+    * }} abject
+    */
+    static fromJSON({ Position, Rotation, Intensity }) {
+        return new Light({
+            position: Vector3.fromJSON(Position),
+            rotation: Matrix3.fromJSON(Rotation),
+            intensity: Intensity
+        })
+    }
 }

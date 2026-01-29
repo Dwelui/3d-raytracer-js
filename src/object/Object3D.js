@@ -1,4 +1,4 @@
-import { assertInstances, assertNumbers } from "../Assert.js";
+import { assertInstances, assertNumbers, assertObjects } from "../Assert.js";
 import Matrix3 from "../math/Matrix3.js";
 import Vector3 from "../math/Vector3.js";
 
@@ -27,6 +27,19 @@ export default class Object3D {
             Position: this.position.toJSON(),
             Rotation: this.rotation.toJSON()
         }
+    }
+
+    /**
+    * @param {{
+    *   positionJSON: Object,
+    *   rotationJSON: Array<number> | Array<Vector3> | undefined
+    * }} abject
+    */
+    static fromJSON({ positionJSON, rotationJSON }) {
+        return new Object3D({
+            position: Vector3.fromJSON(positionJSON),
+            rotation: Matrix3.fromJSON(rotationJSON)
+        })
     }
 
     /** @param {number} units */

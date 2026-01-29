@@ -112,6 +112,9 @@ export default class Matrix3 {
         }
     }
 
+    /** @param {Array<number> | Array<Vector3> | undefined} object */
+    static fromJSON(object) { return new Matrix3(object) }
+
     toArray() {
         return [
             this.get(0),

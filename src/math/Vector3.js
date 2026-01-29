@@ -1,4 +1,4 @@
-import { assertInstances, assertInstancesMapped, assertNumbers } from "../Assert.js"
+import { assertInstances, assertInstancesMapped, assertNumbers, assertNumbersNullable, assertNumbersUndefined } from "../Assert.js"
 
 export default class Vector3 {
     /** @type{number} */ #x
@@ -43,6 +43,18 @@ export default class Vector3 {
             y: this.y,
             z: this.z,
         }
+    }
+
+    /** @param {{
+    *       x?: number,
+    *       y?: number,
+    *       z?: number,
+    *   }} object
+    */
+    static fromJSON({ x, y, z }) {
+        assertNumbersUndefined({ x, y, z })
+
+        return new Vector3(x, y, z)
     }
 
     toArray() { return [this.x, this.y, this.z] }

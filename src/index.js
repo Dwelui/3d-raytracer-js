@@ -64,6 +64,13 @@ scene.add(ambientLight)
 scene.add(pointLight)
 scene.add(directionalLight)
 
+const traceRayWorker = new Worker('src/worker/TraceRayWorker.js', { type: "module" })
+traceRayWorker.postMessage(scene.toJSON())
+traceRayWorker.onmessage = (e) => {
+    console.log(e.data)
+    console.log("Message received from worker")
+}
+
 const canvas = new Canvas('#canvas', {
     width,
     height,

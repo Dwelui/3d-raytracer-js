@@ -28,4 +28,28 @@ export default class Scene extends Object3D {
             Objects3D: this.#objects.map(object => object.toJSON())
         }
     }
+
+    /**
+    * @param {{
+    *   positionJSON: Object,
+    *   rotationJSON: Array<number> | Array<Vector3> | undefined
+    *   objectsJSON: Array<{
+    *      positionJSON: Object,
+    *      rotationJSON: Array<number> | Array<Vector3> | undefined
+    *    }> | undefined
+    * }} abject
+    */
+    static fromJSON({ positionJSON, objectsJSON }) {
+        const scene = new Scene({
+            position: Vector3.fromJSON(positionJSON)
+        })
+
+        if (objectsJSON) {
+            for (const objectJSON of objectsJSON) {
+                scene.add(Object3D.fromJSON(objectJSON))
+            }
+        }
+
+        return scene
+    }
 }

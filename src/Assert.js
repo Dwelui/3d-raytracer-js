@@ -114,6 +114,24 @@ export function assertPositiveNumbers(numbers) {
     }
 }
 
+/** @param {Object.<string, ?number>} numbers */
+export function assertNumbersNullable(numbers) {
+    if (!enabled) return
+
+    for (const [name, value] of Object.entries(numbers)) {
+        assertNumberNullable(value, name)
+    }
+}
+
+/** @param {Object.<string, number|undefined>} numbers */
+export function assertNumbersUndefined(numbers) {
+    if (!enabled) return
+
+    for (const [name, value] of Object.entries(numbers)) {
+        assertNumberUndefined(value, name)
+    }
+}
+
 /** @param {Object.<string, number>} numbers */
 export function assertNumbers(numbers) {
     if (!enabled) return
@@ -153,6 +171,28 @@ function assertNumberBetween(value, name, from, till) {
     if (value < from || value > till) {
         console.assert(false, value)
         throw new RangeError(`Parameter '${name}' is not between ${from} and ${till}`)
+    }
+}
+
+/**
+* @param {?number} value
+* @param {string} name
+*/
+function assertNumberNullable(value, name) {
+    if (value !== null && typeof value !== 'number') {
+        console.assert(false, value)
+        throw new TypeError(`Parameter '${name}' is not nullable number`)
+    }
+}
+
+/**
+* @param {number|undefined} value
+* @param {string} name
+*/
+function assertNumberUndefined(value, name) {
+    if (typeof value !== 'undefined' && typeof value !== 'number') {
+        console.assert(false, value)
+        throw new TypeError(`Parameter '${name}' is not nullable number`)
     }
 }
 

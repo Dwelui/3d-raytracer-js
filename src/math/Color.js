@@ -1,4 +1,4 @@
-import { assertInstancesMapped, assertNumbersBetween } from "../Assert.js";
+import { assertInstancesMapped, assertNumbersBetween, assertNumbersUndefined } from "../Assert.js";
 import Vector3 from "./Vector3.js";
 
 export default class Color extends Vector3 {
@@ -33,6 +33,19 @@ export default class Color extends Vector3 {
         const toHex = value => Math.round(value).toString(16).padStart(2, "0")
 
         return `#${toHex(this.r)}${toHex(this.g)}${toHex(this.b)}`
+    }
+
+    /**
+    * @param {{
+    *       x?: number,
+    *       y?: number,
+    *       z?: number,
+    *   }} [object]
+    */
+    static fromJSON({ x, y, z } = {}) {
+        assertNumbersUndefined({ x, y, z })
+
+        return new Color(x, y, z)
     }
 
     /** @param {Vector3} vector */

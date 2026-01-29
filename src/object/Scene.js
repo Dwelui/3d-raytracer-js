@@ -1,6 +1,7 @@
 import { assertInstancesMapped, assertInstancesNullable } from "../Assert.js"
 import Vector3 from "../math/Vector3.js"
 import Object3D from "./Object3D.js"
+import Sphere from "./Sphere.js"
 
 export default class Scene extends Object3D {
     /** @type{Array<Object3D>} */ #objects = []
@@ -33,10 +34,7 @@ export default class Scene extends Object3D {
     * @param {{
     *   Position: Object,
     *   Rotation: Array<number> | Array<Vector3> | undefined
-    *   Objects3D: Array<{
-    *      Position: Object,
-    *      Rotation: Array<number> | Array<Vector3> | undefined
-    *    }> | undefined
+    *   Objects3D: Array<any> | undefined
     * }} abject
     */
     static fromJSON({ Position, Objects3D }) {
@@ -46,7 +44,10 @@ export default class Scene extends Object3D {
 
         if (Objects3D) {
             for (const objectJSON of Objects3D) {
-                scene.add(Object3D.fromJSON(objectJSON))
+                console.log(objectJSON)
+                if (objectJSON.type === "Sphere") {
+                    scene.add(Sphere.fromJSON(objectJSON))
+                }
             }
         }
 

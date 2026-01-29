@@ -1,8 +1,10 @@
-import { assertInstances, assertNumbers, assertObjects } from "../Assert.js";
+import { assertInstances, assertNumbers } from "../Assert.js";
 import Matrix3 from "../math/Matrix3.js";
 import Vector3 from "../math/Vector3.js";
 
 export default class Object3D {
+    /** @type {string} */ type = "Object3D"
+
     /** @type{Vector3} */ #position
     /** @type{Matrix3} */ #rotation
 
@@ -24,6 +26,7 @@ export default class Object3D {
 
     toJSON() {
         return {
+            type: this.type,
             Position: this.position.toJSON(),
             Rotation: this.rotation.toJSON()
         }

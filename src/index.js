@@ -10,7 +10,7 @@ import Sphere from "./object/Sphere.js"
 import RayTracer from "./RayTracer.js"
 import Viewport from "./Viewport.js"
 
-const [width, height] = [window.innerWidth, window.innerHeight]
+const [width, height] = [1, 1]
 
 const viewport = new Viewport({ width: 1, height: height / width }, 1)
 const camera = new Camera({ position: new Vector3(3, 0, 1) })
@@ -64,13 +64,6 @@ scene.add(ambientLight)
 scene.add(pointLight)
 scene.add(directionalLight)
 
-const traceRayWorker = new Worker('src/worker/TraceRayWorker.js', { type: "module" })
-traceRayWorker.postMessage(scene.toJSON())
-traceRayWorker.onmessage = (e) => {
-    console.log(e.data)
-    console.log("Message received from worker")
-}
-
 const canvas = new Canvas('#canvas', {
     width,
     height,
@@ -81,7 +74,7 @@ const canvas = new Canvas('#canvas', {
 canvas.rayTrace({
     camera,
     viewport,
-    rayTracer: new RayTracer(scene),
+    scene,
     intersectionMin: viewport.distanceToCamera,
     intersectionMax: 100,
     recursionDepth: 3

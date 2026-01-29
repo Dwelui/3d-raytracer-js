@@ -2,6 +2,7 @@ import {  assertInstancesMapped, assertNumbers, assertObjects, assertPositiveNum
 import Color from "./math/Color.js"
 import Matrix3 from "./math/Matrix3.js"
 import Camera from "./object/Camera.js"
+import Scene from "./object/Scene.js"
 import RayTracer from "./RayTracer.js"
 import Viewport from "./Viewport.js"
 
@@ -88,7 +89,7 @@ export default class Canvas {
 
     /**
      * @param {Object} args
-     * @param {RayTracer} args.rayTracer
+     * @param {Scene} args.scene
      * @param {Viewport} args.viewport
      * @param {Camera} args.camera
      * @param {number} args.intersectionMin
@@ -96,33 +97,55 @@ export default class Canvas {
      * @param {number} args.recursionDepth
      */
     async rayTrace({
-        rayTracer,
+        scene,
         viewport,
         camera,
         intersectionMin,
         intersectionMax,
         recursionDepth
     }) {
-        assertInstancesMapped({ rayTracer, viewport, camera })
+        assertInstancesMapped({ scene, viewport, camera })
         assertPositiveNumbers({ intersectionMin, intersectionMax, recursionDepth })
 
         this.clear()
 
         const start = performance.now()
 
+        const traceRayWorker = new Worker('src/worker/TraceRayWorker.js', { type: "module" })
+
+        traceRayWorker.onmessage = (e) => {
+            console.log(e.data)
+            console.log("Message received from worker")
+        }
+
         for (let x = -this.width / 2; x < this.width / 2; x++) {
             for (let y = -this.height / 2; y < this.height / 2; y++) {
                 const rayDirection = Matrix3.multiplyVector3(camera.rotation, viewport.fromCanvas(x, y, this))
-                const color = rayTracer.traceRay(
-                    camera.position,
-                    rayDirection,
+
+                traceRayWorker.postMessage({
+                    sceneJSON: scene.toJSON(),
+                    startingPointJSON: camera.position.toJSON(),
+                    rayDirectionJSON: rayDirection.toJSON(),
                     intersectionMin,
                     intersectionMax,
                     recursionDepth
-                ) ?? this.backroundColor
+                })
 
-                this.putPixel(x, y, color)
 
+
+
+
+
+                // const color = new RayTracer(scene).traceRay(
+                //     camera.position,
+                //     rayDirection,
+                //     intersectionMin,
+                //     intersectionMax,
+                //     recursionDepth
+                // ) ?? this.backroundColor
+                //
+                // this.putPixel(x, y, color)
+                //
                 if (this.rayTraceDrawMode === Canvas.RayTraceDrawMode.SLOWEST) {
                     await new Promise(requestAnimationFrame)
                 }

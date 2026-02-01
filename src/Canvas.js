@@ -107,8 +107,8 @@ export default class Canvas {
 
         this.clear()
 
-        const xChunkCount = 64
-        const yChunkCount = 64
+        const xChunkCount = 48
+        const yChunkCount = 48
         const xChunkSize = this.width / xChunkCount
         const yChunkSize = this.height / yChunkCount
 
@@ -203,7 +203,7 @@ export default class Canvas {
             }
         }
 
-        const workerCount = 4
+        const workerCount = 6
         /**
         * @type {Array<{
         *   worker: Worker,

@@ -26,7 +26,7 @@ let recursionDepth = null
 let width = null
 /** @type {?number} */
 let height = null
-let batchSize = 150
+let batchSize = 450
 
 onmessage = (ev) => {
     /**

@@ -203,7 +203,8 @@ export default class Canvas {
             }
         }
 
-        const workerCount = 6
+        let workerCount = 6
+        workerCount = chunks.length < workerCount ? chunks.length : workerCount
         /**
         * @type {Array<{
         *   worker: Worker,
@@ -214,7 +215,6 @@ export default class Canvas {
         for (let i = 0; i < workerCount; i++) {
             const traceRayWorker = new Worker('src/worker/TraceRayWorker.js', { type: "module" })
             workers.push({ isFinished: true, worker: traceRayWorker })
-
             traceRayWorker.postMessage(initializeRayWorker(i))
             traceRayWorker.onmessage = handleRayWorker
             traceRayWorker.postMessage({

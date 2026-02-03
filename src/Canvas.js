@@ -158,6 +158,13 @@ export default class Canvas {
             }
         }
 
+        // TODO refactor to use shared workers
+        // Need to add:
+        // Cross-Origin-Opener-Policy: same-origin
+        // Cross-Origin-Embedder-Policy: require-corp
+        //
+        // Calculate pixel position with chunk data and write raw rgba to shared buffer
+
         /** @param {any} ev */
         const handleRayWorker = (ev) => {
             /**

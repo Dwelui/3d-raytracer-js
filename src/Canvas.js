@@ -164,6 +164,7 @@ export default class Canvas {
         // Cross-Origin-Embedder-Policy: require-corp
         //
         // Calculate pixel position with chunk data and write raw rgba to shared buffer
+        // Try to use Atomics
 
         /** @param {any} ev */
         const handleRayWorker = (ev) => {

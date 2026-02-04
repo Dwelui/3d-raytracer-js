@@ -105,8 +105,6 @@ export default class Canvas {
         assertInstancesMapped({ scene, viewport, camera })
         assertPositiveNumbers({ intersectionMin, intersectionMax, recursionDepth })
 
-        this.clear()
-
         const xChunkCount = 16
         const yChunkCount = 16
         const xChunkSize = this.width / xChunkCount
@@ -122,10 +120,12 @@ export default class Canvas {
         * }>}
         */
         const chunks = []
+        const widthHalf = this.width / 2
+        const heightHalf = this.height / 2
         for (let x = 0; x < xChunkCount; x++) {
-            const xChunk = [xChunkSize * x - this.width / 2, xChunkSize * (x + 1) - this.width / 2]
+            const xChunk = [xChunkSize * x - widthHalf, xChunkSize * (x + 1) - widthHalf]
             for (let y = 0; y < yChunkCount; y++) {
-                const yChunk = [yChunkSize * y - this.height / 2, yChunkSize * (y + 1) - this.height / 2]
+                const yChunk = [yChunkSize * y - heightHalf, yChunkSize * (y + 1) - heightHalf]
 
                 chunks.push({
                     id: chunkCount,
@@ -138,8 +138,10 @@ export default class Canvas {
             }
         }
 
-        const sab = new SharedArrayBuffer(this.width * this.height * 4)
+        const bufferSize = this.width * this.height * 4
+        const sab = new SharedArrayBuffer(bufferSize)
         const sharedPixels = new Uint8ClampedArray(sab)
+        const displayPixels = new Uint8ClampedArray(bufferSize)
 
         const start = performance.now()
 
@@ -174,7 +176,6 @@ export default class Canvas {
 
             const doneChunks = chunks.filter(chunk => chunk.status === 'done')
             if (doneChunks.length === chunkCount) {
-                const displayPixels = new Uint8ClampedArray(this.width * this.height * 4)
                 displayPixels.set(sharedPixels)
                 this.#context.putImageData(new ImageData(displayPixels, this.width, this.height), 0, 0)
                 console.log((performance.now() - start) / 1000)

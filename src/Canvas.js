@@ -139,6 +139,8 @@ export default class Canvas {
         }
 
         const pixelArray = new Uint8ClampedArray(this.width * this.height * 4)
+        const sab = new SharedArrayBuffer(this.width * this.height * 4)
+        const pixels = new Uint8ClampedArray(sab)
 
         const start = performance.now()
 
@@ -150,6 +152,7 @@ export default class Canvas {
                 sceneJSON: scene.toJSON(),
                 cameraJSON: camera.toJSON(),
                 viewportJSON: viewport.toJSON(),
+                sab,
                 intersectionMin,
                 intersectionMax,
                 recursionDepth,
@@ -200,7 +203,9 @@ export default class Canvas {
                 const doneChunks = chunks.filter(chunk => chunk.status === 'done')
                 if (doneChunks.length === chunkCount) {
                     console.log((performance.now() - start) / 1000)
-                    this.#context.putImageData(new ImageData(pixelArray, this.width, this.height), 0, 0)
+                    const displayPixels = new Uint8ClampedArray(this.width * this.height * 4)
+                    displayPixels.set(pixels)
+                    this.#context.putImageData(new ImageData(displayPixels, this.width, this.height), 0, 0)
                     return
                 }
 

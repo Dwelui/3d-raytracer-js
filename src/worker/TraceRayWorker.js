@@ -28,6 +28,9 @@ let width = null
 let height = null
 let batchSize = 450
 
+/** @type Uint8ClampedArray */
+let pixels
+
 onmessage = (ev) => {
     /**
     * @type {{
@@ -36,6 +39,7 @@ onmessage = (ev) => {
     *   sceneJSON: any,
     *   cameraJSON: any,
     *   viewportJSON: any,
+    *   sab: SharedArrayBuffer
     *   intersectionMin: number,
     *   intersectionMax: number,
     *   recursionDepth: number,
@@ -45,9 +49,10 @@ onmessage = (ev) => {
     const { type } = ev.data
 
     if (type === 'initialize') {
-        const { sceneJSON, cameraJSON, viewportJSON } = ev.data;
+        const { sceneJSON, cameraJSON, viewportJSON, sab } = ev.data;
         ({ id, intersectionMin, intersectionMax, recursionDepth, width, height } = ev.data)
 
+        pixels = new Uint8ClampedArray(sab)
         scene = Scene.fromJSON(sceneJSON)
         rayTracer = new RayTracer(scene)
         camera = Camera.fromJSON(cameraJSON)
@@ -74,6 +79,8 @@ function TraceRayBatch(chunkId, { xChunk, yChunk }) {
     let result = []
 
     for (let x = xChunk[0]; x < xChunk[1]; x++) {
+        const offsetX = (Math.floor(x + width / 2))
+
         for (let y = yChunk[0]; y < yChunk[1]; y++) {
             const rayDirection = Matrix3.multiplyVector3(camera.rotation, viewport.fromCanvas(x, y, width, height))
 
@@ -84,6 +91,20 @@ function TraceRayBatch(chunkId, { xChunk, yChunk }) {
                 intersectionMax,
                 recursionDepth
             )
+
+            const pixelIndex = ((Math.floor(height / 2 - y)) * width + offsetX) * 4
+            const rgba = color?.rgba
+            if (rgba) {
+                pixels[pixelIndex + 0] = rgba[0]
+                pixels[pixelIndex + 1] = rgba[1]
+                pixels[pixelIndex + 2] = rgba[2]
+                pixels[pixelIndex + 3] = 255
+            } else {
+                pixels[pixelIndex + 0] = 255
+                pixels[pixelIndex + 1] = 255
+                pixels[pixelIndex + 2] = 255
+                pixels[pixelIndex + 3] = 255
+            }
 
             result.push({
                 color: color ? color.toArray() : null,

@@ -160,15 +160,14 @@ export default class Canvas {
             }
         }
 
-        // TODO refactor to use shared workers
-        // Need to add:
-
-        /** @param {any} ev */
+        /**
+        * @param {MessageEvent<{
+        *   chunkId: number,
+        *   workerId: number
+        * }>} ev
+        */
         const handleRayWorker = (ev) => {
-            /** @type {number} */
-            const chunkId = ev.data.chunkId
-            /** @type {number} */
-            const workerId = ev.data.workerId
+            const { chunkId, workerId } = ev.data
 
             const chunk = chunks.find(chunk => chunk.id === chunkId)
             if (chunk) chunk.status = "done"
@@ -201,13 +200,12 @@ export default class Canvas {
         /**
         * @type {Array<{
         *   worker: Worker,
-        *   isFinished: boolean
         * }>}
         */
         const workers = []
         for (let i = 0; i < workerCount; i++) {
             const traceRayWorker = new Worker('src/worker/TraceRayWorker.js', { type: "module" })
-            workers.push({ isFinished: true, worker: traceRayWorker })
+            workers.push({ worker: traceRayWorker })
             traceRayWorker.postMessage(initializeRayWorker(i))
             traceRayWorker.onmessage = handleRayWorker
             traceRayWorker.postMessage({

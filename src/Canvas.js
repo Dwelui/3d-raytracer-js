@@ -110,19 +110,11 @@ export default class Canvas {
         const xChunkSize = Math.floor(this.width / xChunkCount)
         const yChunkSize = Math.floor(this.height / yChunkCount)
 
-        /**
-        * @type {Array<{
-        *   id: number,
-        *   xChunk: Array<number>,
-        *   yChunk: Array<number>,
-        *   status: 'waiting'|'done'|'inprogress'
-        * }>}
-        */
-        const chunks = []
         const widthHalf = this.width / 2
         const heightHalf = this.height / 2
 
-        const chunkBufferSize = xChunkCount * yChunkCount * 4 * Int32Array.BYTES_PER_ELEMENT
+        const chunkCount = xChunkCount * yChunkCount
+        const chunkBufferSize = chunkCount * 4 * Int32Array.BYTES_PER_ELEMENT
         const sharedChunkBuffer = new SharedArrayBuffer(chunkBufferSize)
         const sharedChunks = new Int32Array(sharedChunkBuffer)
 
@@ -138,13 +130,6 @@ export default class Canvas {
                 sharedChunks[chunkPosition + 1] = xChunk[1]
                 sharedChunks[chunkPosition + 2] = yChunk[0]
                 sharedChunks[chunkPosition + 3] = yChunk[1]
-
-                chunks.push({
-                    id: chunkPosition,
-                    xChunk,
-                    yChunk,
-                    status: "waiting"
-                })
             }
         }
 
@@ -153,62 +138,37 @@ export default class Canvas {
         const sharedPixels = new Uint8ClampedArray(sharedPixelBuffer)
         const displayPixels = new Uint8ClampedArray(pixelBufferSize)
 
+        const NEXT_CHUNK = 0;
+        const COMPLETED = 1;
+        const TOTAL = 2;
+        const ABORT = 3;
+        const controlBufferSize = 4 * Int32Array.BYTES_PER_ELEMENT
+        const sharedControlBuffer = new SharedArrayBuffer(controlBufferSize)
+        const sharedControls = new Int32Array(sharedControlBuffer)
+        sharedControls[TOTAL] = chunkCount;
+        sharedControls[NEXT_CHUNK] = 0;
+        sharedControls[COMPLETED] = 0;
+        sharedControls[ABORT] = 0;
+
         const start = performance.now()
 
-        /** @param {number} id */
-        const initializeRayWorker = (id) => {
-            return {
-                type: 'initialize',
-                id,
-                sceneJSON: scene.toJSON(),
-                cameraJSON: camera.toJSON(),
-                viewportJSON: viewport.toJSON(),
-                sharedPixelBuffer,
-                sharedChunkBuffer,
-                intersectionMin,
-                intersectionMax,
-                recursionDepth,
-                width: this.width,
-                height: this.height
-            }
-        }
-
-        /**
-        * @param {MessageEvent<{
-        *   chunkId: number,
-        *   workerId: number
-        * }>} ev
-        */
-        const handleRayWorker = (ev) => {
-            const { chunkId, workerId } = ev.data
-
-            const chunk = chunks.find(chunk => chunk.id === chunkId)
-            if (chunk) chunk.status = "done"
-
-            const doneChunks = chunks.filter(chunk => chunk.status === 'done')
-            if (doneChunks.length === chunks.length) {
-                displayPixels.set(sharedPixels)
-                this.#context.putImageData(new ImageData(displayPixels, this.width, this.height), 0, 0)
-                console.log((performance.now() - start) / 1000)
-                return
-            }
-
-            const waitingChunks = chunks.filter(chunk => chunk.status === 'waiting')
-            if (waitingChunks.length === 0) {
-                return
-            }
-
-            const nextChunk = waitingChunks[0]
-            nextChunk.status = "inprogress"
-
-            workers[workerId].worker.postMessage({
-                type: 'trace',
-                chunk: nextChunk,
-            })
+        const initializeRayWorker = {
+            type: 'initialize',
+            sceneJSON: scene.toJSON(),
+            cameraJSON: camera.toJSON(),
+            viewportJSON: viewport.toJSON(),
+            sharedPixelBuffer,
+            sharedChunkBuffer,
+            sharedControlBuffer,
+            intersectionMin,
+            intersectionMax,
+            recursionDepth,
+            width: this.width,
+            height: this.height
         }
 
         let workerCount = 1
-        workerCount = chunks.length < workerCount ? chunks.length : workerCount
+        workerCount = chunkCount < workerCount ? chunkCount : workerCount
         /**
         * @type {Array<{
         *   worker: Worker,
@@ -218,13 +178,22 @@ export default class Canvas {
         for (let i = 0; i < workerCount; i++) {
             const traceRayWorker = new Worker('src/worker/TraceRayWorker.js', { type: "module" })
             workers.push({ worker: traceRayWorker })
-            traceRayWorker.postMessage(initializeRayWorker(i))
-            traceRayWorker.onmessage = handleRayWorker
-            traceRayWorker.postMessage({
-                type: 'trace',
-                chunk: chunks[i],
-            })
+            traceRayWorker.postMessage(initializeRayWorker)
         }
+
+        const waitForCompletion = () => {
+            const done = Atomics.load(sharedControls, COMPLETED)
+            if (done === chunkCount) {
+                displayPixels.set(sharedPixels)
+                this.#context.putImageData(new ImageData(displayPixels, this.width, this.height), 0, 0)
+
+                console.log((performance.now() - start) / 1000)
+            } else {
+                requestAnimationFrame(waitForCompletion)
+            }
+        }
+
+        waitForCompletion()
     }
 
     /**

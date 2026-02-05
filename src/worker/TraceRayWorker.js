@@ -7,8 +7,6 @@ import Viewport from "../Viewport.js"
 
 disableAsserts()
 
-/** @type {?number} */
-let id = null
 let scene = null
 /** @type {?RayTracer} */
 let rayTracer = null
@@ -31,42 +29,57 @@ let height = null
 let chunks
 /** @type Uint8ClampedArray */
 let pixels
+/** @type Int32Array */
+let controls
+
+const NEXT_CHUNK = 0;
+const COMPLETED = 1;
+const TOTAL = 2;
+const ABORT = 3;
 
 onmessage = (ev) => {
     const { type } = ev.data
 
     if (type === 'initialize') {
-        const { sceneJSON, cameraJSON, viewportJSON, sharedPixelBuffer, sharedChunkBuffer } = ev.data;
-        ({ id, intersectionMin, intersectionMax, recursionDepth, width, height } = ev.data)
+        const { sceneJSON, cameraJSON, viewportJSON, sharedPixelBuffer, sharedChunkBuffer, sharedControlBuffer } = ev.data;
+        ({ intersectionMin, intersectionMax, recursionDepth, width, height } = ev.data)
 
         chunks = new Int32Array(sharedChunkBuffer)
         pixels = new Uint8ClampedArray(sharedPixelBuffer)
+        controls = new Int32Array(sharedControlBuffer)
+
         scene = Scene.fromJSON(sceneJSON)
         rayTracer = new RayTracer(scene)
         camera = Camera.fromJSON(cameraJSON)
         viewport = Viewport.fromJSON(viewportJSON)
-    }
 
-    if (type === 'trace') {
-        const chunkPosition = ev.data.chunk.id
-        const chunk = [
-            chunks[chunkPosition + 0],
-            chunks[chunkPosition + 1],
-            chunks[chunkPosition + 2],
-            chunks[chunkPosition + 3],
-        ]
+        while (true) {
+            if (Atomics.load(controls, ABORT)) return
 
-        TraceRayBatch(ev.data.chunk.id, chunk)
+            const chunkId = Atomics.add(controls, NEXT_CHUNK, 1)
+            if (chunkId >= controls[TOTAL]) break;
+
+            const chunkPosition = chunkId * 4
+            const chunk = [
+                chunks[chunkPosition + 0],
+                chunks[chunkPosition + 1],
+                chunks[chunkPosition + 2],
+                chunks[chunkPosition + 3],
+            ]
+
+            TraceRayBatch(chunk)
+
+            Atomics.add(controls, COMPLETED, 1)
+        }
     }
 }
 
 /**
-* @param {number} chunkId
 * @param {Array<number>} chunk
 */
-function TraceRayBatch(chunkId, chunk) {
+function TraceRayBatch(chunk) {
     if (!rayTracer || !camera || !viewport || !intersectionMin || !intersectionMax || !recursionDepth || !width || !height) {
-        console.log({ id, rayTracer, camera, viewport, intersectionMin, intersectionMax, recursionDepth, width, height })
+        console.log({ rayTracer, camera, viewport, intersectionMin, intersectionMax, recursionDepth, width, height })
         throw new Error('Worker not initialized')
     }
 
@@ -99,6 +112,4 @@ function TraceRayBatch(chunkId, chunk) {
             }
         }
     }
-
-    postMessage({ workerId: id, chunkId })
 }

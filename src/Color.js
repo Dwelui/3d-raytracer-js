@@ -39,20 +39,14 @@ export default class Color {
         return `#${toHex(this.#components[0])}${toHex(this.#components[1])}${toHex(this.#components[2])}${toHex(this.#components[3])}`
     }
 
-    get rgba() { return [ this.#components[0], this.#components[1], this.#components[2], this.#components[3] ] }
+    toArray() {
+        const clone = new Uint8ClampedArray(this.#components.length)
+        clone.set(this.#components)
 
-    /**
-    * @param {{
-    *       x?: number,
-    *       y?: number,
-    *       z?: number,
-    *   }} [object]
-    */
-    static fromJSON({ x, y, z } = {}) {
-        return new Color(x, y, z)
+        return clone
     }
 
-    /** @param {Array<number>} array */
+    /** @param {ArrayLike<number>} array */
     static fromArray(array) {
         if (array.length === 3 || array.length === 4) {
             return new Color(array[0], array[1], array[2], array[3])

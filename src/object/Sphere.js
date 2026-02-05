@@ -58,7 +58,7 @@ export default class Sphere extends Object3D {
             Radius: this.radius,
             Specular: this.specular,
             Reflective: this.reflective,
-            Color: this.color.toJSON()
+            Color: this.color.toArray()
         }
     }
 
@@ -68,7 +68,7 @@ export default class Sphere extends Object3D {
     *   Rotation: Array<number> | Array<Vector3> | undefined,
     *   Radius: number,
     *   Reflective: number,
-    *   Color: Object,
+    *   Color: ArrayLike<number>,
     *   Specular: number
     * }} object
     */
@@ -78,7 +78,7 @@ export default class Sphere extends Object3D {
             rotation: Matrix3.fromJSON(object.Rotation),
             reflective: object.Reflective,
             specular: object.Specular,
-            color: Color.fromJSON(object.Color),
+            color: Color.fromArray(object.Color),
             radius: object.Radius
         })
     }

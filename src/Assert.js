@@ -1,5 +1,5 @@
 import Canvas from "./Canvas.js"
-import Color from "./math/Color.js"
+import Color from "./Color.js"
 import Matrix3 from "./math/Matrix3.js"
 import Vector3 from "./math/Vector3.js"
 import Camera from "./object/Camera.js"

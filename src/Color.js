@@ -1,8 +1,7 @@
-import { assertInstancesMapped, assertNumbersBetween, assertNumbersUndefined } from "../Assert.js";
-import Vector3 from "./Vector3.js";
+import { assertInstancesMapped, assertNumbersBetween, assertNumbersUndefined } from "./Assert.js";
+import Vector3 from "./math/Vector3.js";
 
 export default class Color extends Vector3 {
-
     /**
     * @param {number} r - Must be between 0 and 255.
     * @param {number} g - Must be between 0 and 255.

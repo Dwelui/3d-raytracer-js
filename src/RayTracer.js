@@ -1,5 +1,5 @@
 import { assertInstances, assertInstancesMapped, assertPositiveNumbers } from "./Assert.js"
-import Color from "./math/Color.js"
+import Color from "./Color.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
 import DirectionalLight from "./object/DirectionalLight.js"

@@ -1,5 +1,5 @@
 import { assertInstancesMapped, assertNumbers, assertObjects, assertPositiveNumbers, assertStrings } from "./Assert.js"
-import Color from "./math/Color.js"
+import Color from "./Color.js"
 import Camera from "./object/Camera.js"
 import Scene from "./object/Scene.js"
 import Viewport from "./Viewport.js"

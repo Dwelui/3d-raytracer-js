@@ -7,8 +7,6 @@ import Viewport from "../Viewport.js"
 
 disableAsserts()
 
-/** @type {?number} */
-let id = null
 let scene = null
 /** @type {?RayTracer} */
 let rayTracer = null
@@ -26,55 +24,65 @@ let recursionDepth = null
 let width = null
 /** @type {?number} */
 let height = null
-let batchSize = 450
+
+/** @type Int32Array */
+let chunks
+/** @type Uint8ClampedArray */
+let pixels
+/** @type Int32Array */
+let controls
+
+const NEXT_CHUNK = 0;
+const COMPLETED = 1;
+const TOTAL = 2;
+const ABORT = 3;
 
 onmessage = (ev) => {
-    /**
-    * @type {{
-    *   id: number,
-    *   type: 'initialize'|'trace',
-    *   sceneJSON: any,
-    *   cameraJSON: any,
-    *   viewportJSON: any,
-    *   intersectionMin: number,
-    *   intersectionMax: number,
-    *   recursionDepth: number,
-    * }} data
-    */
+    const { sceneJSON, cameraJSON, viewportJSON, sharedPixelBuffer, sharedChunkBuffer, sharedControlBuffer } = ev.data;
+    ({ intersectionMin, intersectionMax, recursionDepth, width, height } = ev.data)
 
-    const { type } = ev.data
+    chunks = new Int32Array(sharedChunkBuffer)
+    pixels = new Uint8ClampedArray(sharedPixelBuffer)
+    controls = new Int32Array(sharedControlBuffer)
 
-    if (type === 'initialize') {
-        const { sceneJSON, cameraJSON, viewportJSON } = ev.data;
-        ({ id, intersectionMin, intersectionMax, recursionDepth, width, height } = ev.data)
+    scene = Scene.fromJSON(sceneJSON)
+    rayTracer = new RayTracer(scene)
+    camera = Camera.fromJSON(cameraJSON)
+    viewport = Viewport.fromJSON(viewportJSON)
 
-        scene = Scene.fromJSON(sceneJSON)
-        rayTracer = new RayTracer(scene)
-        camera = Camera.fromJSON(cameraJSON)
-        viewport = Viewport.fromJSON(viewportJSON)
-    }
+    while (true) {
+        if (Atomics.load(controls, ABORT)) return
 
-    if (type === 'trace') {
-        TraceRayBatch(ev.data.chunk.id, ev.data.chunk)
+        const chunkId = Atomics.add(controls, NEXT_CHUNK, 1)
+        if (chunkId >= controls[TOTAL]) break;
+
+        const chunkPosition = chunkId * 4
+        const chunk = [
+            chunks[chunkPosition + 0],
+            chunks[chunkPosition + 1],
+            chunks[chunkPosition + 2],
+            chunks[chunkPosition + 3],
+        ]
+
+        TraceRayBatch(chunk)
+
+        Atomics.add(controls, COMPLETED, 1)
     }
 }
 
 /**
-* @param {number} chunkId
-* @param {Object} args
-* @param {Array<number>} args.xChunk
-* @param {Array<number>} args.yChunk
+* @param {Array<number>} chunk
 */
-function TraceRayBatch(chunkId, { xChunk, yChunk }) {
+function TraceRayBatch(chunk) {
     if (!rayTracer || !camera || !viewport || !intersectionMin || !intersectionMax || !recursionDepth || !width || !height) {
-        console.log({ id, rayTracer, camera, viewport, intersectionMin, intersectionMax, recursionDepth, width, height })
-        throw new Error('Worker not initialized')
+        console.log({ rayTracer, camera, viewport, intersectionMin, intersectionMax, recursionDepth, width, height })
+        throw new Error('Worker not initialized correctly')
     }
 
-    let result = []
+    for (let x = chunk[0]; x < chunk[1]; x++) {
+        const offsetX = (Math.floor(x + width / 2))
 
-    for (let x = xChunk[0]; x < xChunk[1]; x++) {
-        for (let y = yChunk[0]; y < yChunk[1]; y++) {
+        for (let y = chunk[2]; y < chunk[3]; y++) {
             const rayDirection = Matrix3.multiplyVector3(camera.rotation, viewport.fromCanvas(x, y, width, height))
 
             const color = rayTracer.traceRay(
@@ -85,18 +93,19 @@ function TraceRayBatch(chunkId, { xChunk, yChunk }) {
                 recursionDepth
             )
 
-            result.push({
-                color: color ? color.toArray() : null,
-                x,
-                y
-            })
-
-            if (result.length === batchSize) {
-                postMessage({ workerId: id, chunkId, isFinished: false, result })
-                result = []
+            const pixelIndex = ((Math.floor(height / 2 - y)) * width + offsetX) * 4
+            const rgba = color?.rgba
+            if (rgba) {
+                pixels[pixelIndex + 0] = rgba[0]
+                pixels[pixelIndex + 1] = rgba[1]
+                pixels[pixelIndex + 2] = rgba[2]
+                pixels[pixelIndex + 3] = 255
+            } else {
+                pixels[pixelIndex + 0] = 255
+                pixels[pixelIndex + 1] = 255
+                pixels[pixelIndex + 2] = 255
+                pixels[pixelIndex + 3] = 255
             }
         }
     }
-
-    postMessage({ workerId: id, chunkId, isFinished: true, result })
 }

@@ -35,6 +35,8 @@ export default class Color extends Vector3 {
         return `#${toHex(this.r)}${toHex(this.g)}${toHex(this.b)}`
     }
 
+    get rgba() { return [this.r, this.g, this.b, 255] }
+
     /**
     * @param {{
     *       x?: number,

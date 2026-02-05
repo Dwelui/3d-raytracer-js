@@ -105,10 +105,10 @@ export default class Canvas {
         assertInstancesMapped({ scene, viewport, camera })
         assertPositiveNumbers({ intersectionMin, intersectionMax, recursionDepth })
 
-        const xChunkCount = 3
-        const yChunkCount = 4
-        const xChunkSize = Math.floor(this.width / xChunkCount)
-        const yChunkSize = Math.floor(this.height / yChunkCount)
+        const xChunkCount = 64
+        const yChunkCount = 64
+        const xChunkSize = this.width / xChunkCount
+        const yChunkSize = this.height / yChunkCount
 
         const widthHalf = this.width / 2
         const heightHalf = this.height / 2
@@ -167,7 +167,7 @@ export default class Canvas {
             height: this.height
         }
 
-        let workerCount = 1
+        let workerCount = 6
         workerCount = chunkCount < workerCount ? chunkCount : workerCount
 
         /** @type {Array<Worker>} */

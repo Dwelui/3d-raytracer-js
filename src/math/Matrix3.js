@@ -1,4 +1,3 @@
-import { assertInstances, assertInstancesMapped, assertNumbers, assertNumbersBetween } from "../Assert.js"
 import Vector3 from "./Vector3.js"
 
 export default class Matrix3 {
@@ -45,11 +44,8 @@ export default class Matrix3 {
 
         if (args.length === 1) {
             index = args[0]
-            assertNumbersBetween({ index }, 0, 8)
         } else if (args.length === 2) {
             const [row, col] = args
-            assertNumbersBetween({ row, col }, 0, 2)
-
             index = row * 3 + col
         } else {
             throw new Error(`Bad '..args' parameter ${args}`)
@@ -80,17 +76,10 @@ export default class Matrix3 {
 
         if (args.length == 2) {
             [index, value] = args
-
-            assertNumbersBetween({ index }, 0, 8)
-            assertNumbers({ value })
-
         } else if (args.length === 3) {
             const [row, col] = args
             index = row * 3 + col
             value = args[2]
-
-            assertNumbersBetween({ row, col }, 0, 2)
-            assertNumbers({ value })
         } else {
             throw new Error(`Bad '..args' parameter ${args}`)
         }
@@ -150,8 +139,6 @@ export default class Matrix3 {
     * @param {Matrix3} b
     */
     static multiplyMatrix3(a, b) {
-        assertInstances({ a, b }, Matrix3)
-
         return new Matrix3([
             a.get(0) * b.get(0) + a.get(1) * b.get(3) + a.get(2) * b.get(6),
             a.get(0) * b.get(1) + a.get(1) * b.get(4) + a.get(2) * b.get(7),
@@ -172,8 +159,6 @@ export default class Matrix3 {
     * @param {Vector3} vector
     */
     static multiplyVector3(matrix, vector) {
-        assertInstancesMapped({ matrix, vector })
-
         return new Vector3(
             matrix.get(0) * vector.x + matrix.get(1) * vector.y + matrix.get(2) * vector.z,
             matrix.get(3) * vector.x + matrix.get(4) * vector.y + matrix.get(5) * vector.z,

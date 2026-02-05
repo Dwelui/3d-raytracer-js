@@ -1,4 +1,3 @@
-import { assertInstancesMapped, assertNumbersBetween, assertPositiveNumbers } from "../Assert.js"
 import Color from "../Color.js"
 import Matrix3 from "../math/Matrix3.js"
 import Vector3 from "../math/Vector3.js"
@@ -39,18 +38,18 @@ export default class Sphere extends Object3D {
 
     get radius() { return this.#radius }
     /** @param {number} radius - Must be positive. */
-    set radius(radius) { assertPositiveNumbers({ radius }); this.#radius = radius }
+    set radius(radius) { this.#radius = radius }
 
     get color() { return this.#color }
-    set color(color) { assertInstancesMapped({ color }); this.#color = color }
+    set color(color) { this.#color = color }
 
     get specular() { return this.#specular }
     /** @param {number} specular - Must be positive. */
-    set specular(specular) { assertPositiveNumbers({ specular }); this.#specular = specular }
+    set specular(specular) { this.#specular = specular }
 
     get reflective() { return this.#reflective }
     /** @param {number} reflective - Must be between 0 and 1. */
-    set reflective(reflective) { assertNumbersBetween({ reflective }, 0, 1); this.#reflective = reflective }
+    set reflective(reflective) { this.#reflective = reflective }
 
     toJSON() {
         return {

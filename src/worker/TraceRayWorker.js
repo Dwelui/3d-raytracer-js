@@ -1,11 +1,8 @@
-import { disableAsserts } from "../Assert.js"
 import Matrix3 from "../math/Matrix3.js"
 import Camera from "../object/Camera.js"
 import Scene from "../object/Scene.js"
 import RayTracer from "../RayTracer.js"
 import Viewport from "../Viewport.js"
-
-disableAsserts()
 
 let scene = null
 /** @type {?RayTracer} */

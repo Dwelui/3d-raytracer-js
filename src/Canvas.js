@@ -1,4 +1,3 @@
-import { assertInstancesMapped, assertNumbers, assertObjects, assertPositiveNumbers, assertStrings } from "./Assert.js"
 import Color from "./Color.js"
 import Camera from "./object/Camera.js"
 import Scene from "./object/Scene.js"
@@ -33,8 +32,6 @@ export default class Canvas {
     * @param {CanvasOptions} options
     */
     constructor(querySelector, options) {
-        assertStrings({ querySelector })
-
         const canvas = document.querySelector(querySelector)
         if (!(canvas instanceof HTMLCanvasElement)) throw new Error("Canvas element not found")
         this.#canvas = canvas
@@ -42,8 +39,6 @@ export default class Canvas {
         const context = this.#canvas.getContext('2d')
         if (context === null) throw new Error("Context not found")
         this.#context = context
-
-        assertObjects({ options })
 
         this.backroundColor = options.backroundColor ?? new Color()
         this.rayTraceDrawMode = options.rayTraceDrawMode ?? Canvas.RayTraceDrawMode.FASTEST
@@ -53,8 +48,6 @@ export default class Canvas {
 
     get backroundColor() { return this.#options.backroundColor }
     set backroundColor(color) {
-        assertInstancesMapped({ color })
-
         this.#options.backroundColor = color
     }
 
@@ -70,8 +63,6 @@ export default class Canvas {
     get width() { return this.#options.width }
     /** @param {number} pixels - Must be positive */
     set width(pixels) {
-        assertPositiveNumbers({ pixels })
-
         this.#options.width = pixels
         this.#canvas.width = pixels
     }
@@ -79,8 +70,6 @@ export default class Canvas {
     get height() { return this.#options.height }
     /** @param {number} pixels - Must be positive */
     set height(pixels) {
-        assertPositiveNumbers({ pixels })
-
         this.#options.height = pixels
         this.#canvas.height = pixels
     }
@@ -102,9 +91,6 @@ export default class Canvas {
         intersectionMax,
         recursionDepth
     }) {
-        assertInstancesMapped({ scene, viewport, camera })
-        assertPositiveNumbers({ intersectionMin, intersectionMax, recursionDepth })
-
         const xChunkCount = 64
         const yChunkCount = 64
         const xChunkSize = this.width / xChunkCount
@@ -204,9 +190,6 @@ export default class Canvas {
     * @param {Color} color
     */
     putPixel(x, y, color) {
-        assertNumbers({ x, y })
-        assertInstancesMapped({ color })
-
         x += this.width / 2
         y = this.height / 2 - y
         x = Math.round(x)

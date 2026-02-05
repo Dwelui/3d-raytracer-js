@@ -1,4 +1,3 @@
-import { assertInstances, assertNumbers } from "../Assert.js";
 import Matrix3 from "../math/Matrix3.js";
 import Vector3 from "../math/Vector3.js";
 
@@ -19,10 +18,10 @@ export default class Object3D {
     }
 
     get position() { return this.#position }
-    set position(position) { assertInstances({ position }, Vector3); this.#position = position }
+    set position(position) { this.#position = position }
 
     get rotation() { return this.#rotation }
-    set rotation(rotation) { assertInstances({ rotation }, Matrix3); this.#rotation = rotation }
+    set rotation(rotation) { this.#rotation = rotation }
 
     toJSON() {
         return {
@@ -47,29 +46,21 @@ export default class Object3D {
 
     /** @param {number} units */
     translateX(units) {
-        assertNumbers({ units })
-
         this.position.x += units
     }
 
     /** @param {number} units */
     translateY(units) {
-        assertNumbers({ units })
-
         this.position.y += units
     }
 
     /** @param {number} units */
     translateZ(units) {
-        assertNumbers({ units })
-
         this.position.z += units
     }
 
     /** @param {number} degress */
     rotateX(degress) {
-        assertNumbers({ degress })
-
         const radians = degress * Math.PI / 180
         const cos = Math.cos(radians)
         const sin = Math.sin(radians)
@@ -85,8 +76,6 @@ export default class Object3D {
 
     /** @param {number} degress */
     rotateY(degress) {
-        assertNumbers({ degress })
-
         const radians = degress * Math.PI / 180
         const cos = Math.cos(radians)
         const sin = Math.sin(radians)
@@ -102,8 +91,6 @@ export default class Object3D {
 
     /** @param {number} degress */
     rotateZ(degress) {
-        assertNumbers({ degress })
-
         const radians = degress * Math.PI / 180
         const cos = Math.cos(radians)
         const sin = Math.sin(radians)

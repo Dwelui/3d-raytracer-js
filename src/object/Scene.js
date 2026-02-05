@@ -1,4 +1,3 @@
-import { assertInstancesMapped, assertInstancesNullable } from "../Assert.js"
 import Vector3 from "../math/Vector3.js"
 import AmbientLight from "./AmbientLight.js"
 import DirectionalLight from "./DirectionalLight.js"
@@ -16,15 +15,13 @@ export default class Scene extends Object3D {
     constructor({ position } = {}) {
         position = position ?? new Vector3()
 
-        assertInstancesNullable({ position }, Vector3)
-
         super({ position })
     }
 
     get objects() { return this.#objects }
 
     /** @param {Object3D} object3D */
-    add(object3D) { assertInstancesMapped({ object3D }); this.#objects.push(object3D) }
+    add(object3D) { this.#objects.push(object3D) }
 
     toJSON() {
         return {

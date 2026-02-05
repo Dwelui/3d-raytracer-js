@@ -4,7 +4,6 @@
 * @property {number} height - Viewport height in units
 */
 
-import { assertNumbers, assertObjects, assertPositiveNumbers } from "./Assert.js"
 import Vector3 from "./math/Vector3.js"
 
 export default class Viewport {
@@ -19,8 +18,6 @@ export default class Viewport {
     * @param {number} distanceToCamera
     */
     constructor(options, distanceToCamera) {
-        assertObjects({ options })
-
         this.width = options.width
         this.height = options.height
 
@@ -29,15 +26,15 @@ export default class Viewport {
 
     get width() { return this.#options.width }
     /** @param {number} units - Must be positive */
-    set width(units) { assertPositiveNumbers({ units }); this.#options.width = units }
+    set width(units) { this.#options.width = units }
 
     get height() { return this.#options.height }
     /** @param {number} units - Must be positive */
-    set height(units) { assertPositiveNumbers({ units }); this.#options.height = units }
+    set height(units) { this.#options.height = units }
 
     get distanceToCamera() { return this.#distanceToCamera }
     /** @param {number} units - Must be positive */
-    set distanceToCamera(units) { assertPositiveNumbers({ units }); this.#distanceToCamera = units }
+    set distanceToCamera(units) { this.#distanceToCamera = units }
 
     toJSON() {
         return {
@@ -61,8 +58,6 @@ export default class Viewport {
     * @param {number} canvasHeight
     */
     fromCanvas(x, y, canvasWidth, canvasHeight) {
-        assertNumbers({ x, y, canvasWidth, canvasHeight })
-
         return new Vector3(x * this.width / canvasWidth, y * this.height / canvasHeight, this.distanceToCamera)
     }
 }

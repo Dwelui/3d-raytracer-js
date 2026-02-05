@@ -1,4 +1,3 @@
-import { assertInstances, assertInstancesMapped, assertPositiveNumbers } from "./Assert.js"
 import Color from "./Color.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
@@ -15,7 +14,6 @@ export default class RayTracer {
     * @param {Scene} scene
     */
     constructor(scene) {
-        assertInstancesMapped({ scene })
         this.#scene = scene
     }
 
@@ -30,9 +28,6 @@ export default class RayTracer {
     * @returns {Color|null}
     */
     traceRay(startingPoint, rayDirection, intersectionMin, intersectionMax, recursionDepth) {
-        assertInstances({ startingPoint, rayDirection }, Vector3)
-        assertPositiveNumbers({ intersectionMin, intersectionMax, recursionDepth })
-
         const { closestObject, closestIntersection } = this.closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax)
 
         if (closestObject === null) return null
@@ -71,9 +66,6 @@ export default class RayTracer {
     * @param {number} intersectionMax - Must be positive.
     */
     closestIntersection(startingPoint, rayDirection, intersectionMin, intersectionMax) {
-        assertInstances({ startingPoint, rayDirection }, Vector3)
-        assertPositiveNumbers({ intersectionMin, intersectionMax })
-
         let closestIntersection = intersectionMax
         let closestObject = null
 
@@ -117,9 +109,6 @@ export default class RayTracer {
     * @param {Sphere} sphere
     */
     intersectRaySphere(startingPoint, rayDirection, sphere) {
-        assertInstances({ startingPoint, rayDirection }, Vector3)
-        assertInstances({ sphere }, Sphere)
-
         const cameraToSphere = Vector3.subtract(startingPoint, sphere.position)
 
         const a = Vector3.dot(rayDirection, rayDirection)
@@ -142,8 +131,6 @@ export default class RayTracer {
     * @param {Vector3} surfaceNormalDirection
     */
     reflectRay(rayDirection, surfaceNormalDirection) {
-        assertInstances({ rayDirection, surfaceNormalDirection }, Vector3)
-
         surfaceNormalDirection = surfaceNormalDirection.clone()
 
         return surfaceNormalDirection.multiplyScalar(surfaceNormalDirection.dot(rayDirection) * 2).subtract(rayDirection)
@@ -157,9 +144,6 @@ export default class RayTracer {
     * @param {number} intersectionMax - Must be positive.
     */
     calculateLightStrength(intersectionPoint, surfaceNormal, specularExponent, viewVector, intersectionMax) {
-        assertInstances({ intersectionPoint, surfaceNormal, viewVector }, Vector3)
-        assertPositiveNumbers({ specularExponent, intersectionMax })
-
         if (Math.abs(surfaceNormal.magnitude - 1) > 1e-6) {
             throw new Error(
                 `Parameter 'surfaceNormal' is not normalized ${surfaceNormal.magnitude}`

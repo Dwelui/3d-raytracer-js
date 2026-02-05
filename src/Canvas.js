@@ -178,14 +178,19 @@ export default class Canvas {
         }
 
         const waitForCompletion = () => {
-            const done = Atomics.load(sharedControls, COMPLETED)
-            if (done === chunkCount) {
+            const doneCount = Atomics.load(sharedControls, COMPLETED)
+            if (doneCount === chunkCount) {
                 displayPixels.set(sharedPixels)
                 this.#context.putImageData(new ImageData(displayPixels, this.width, this.height), 0, 0)
 
                 console.log((performance.now() - start) / 1000)
                 workers.forEach(worker => worker.terminate())
             } else {
+                if (doneCount % 4 === 0) {
+                    displayPixels.set(sharedPixels)
+                    this.#context.putImageData(new ImageData(displayPixels, this.width, this.height), 0, 0)
+                }
+
                 requestAnimationFrame(waitForCompletion)
             }
         }

@@ -1,10 +1,11 @@
 {
-    "name": "3d-raytracer",
+    "name": "3DLib",
     "version": "1.0.0",
-    "description": "naive implementation of 3d raytracer in js",
+    "description": "naive implementation of 3d in javascript",
     "keywords": [
         "3d",
-        "raytracer"
+        "raytracer",
+        "rasterizer"
     ],
     "license": "isc",
     "author": "mantas motuzas <mantas.motuzas41@gmail.com>",

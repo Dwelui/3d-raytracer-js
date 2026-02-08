@@ -11,19 +11,6 @@ export default class Vector3 {
 
     get magnitude() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z) }
 
-    normalize() {
-        const mag = this.magnitude
-        if (mag !== 0) this.multiplyScalar(1 / mag)
-
-        return this
-    }
-
-    invert() {
-        this.multiplyScalar(-1)
-
-        return this
-    }
-
     clone() { return new Vector3(this.x, this.y, this.z) }
 
     toJSON() {
@@ -47,61 +34,26 @@ export default class Vector3 {
 
     toArray() { return [this.x, this.y, this.z] }
 
-    /**
-    * Mutates vector
-    *
-    * @param {number} number
-    */
-    multiplyScalar(number) {
-        this.x *= number
-        this.y *= number
-        this.z *= number
+    /** @param {Vector3} vector */
+    static normalize(vector) {
+        const x = vector.x, y = vector.y, z = vector.z
+        const inv = 1 / Math.sqrt(x * x + y * y + z * z)
 
-        return this
-    }
-
-    /**
-    * Mutates vector
-    *
-    * @param {Vector3} vector
-    */
-    add(vector) {
-        this.x += vector.x
-        this.y += vector.y
-        this.z += vector.z
-
-        return this
-    }
-
-    /**
-    * Mutates vector
-    *
-    * @param {Vector3} vector
-    */
-    subtract(vector) {
-        this.x -= vector.x
-        this.y -= vector.y
-        this.z -= vector.z
-
-        return this
+        if (inv !== Infinity) {
+            vector.x = x * inv
+            vector.y = y * inv
+            vector.z = z * inv
+        }
+        return vector
     }
 
     /** @param {Vector3} vector */
-    dot(vector) {
-        return this.x * vector.x + this.y * vector.y + this.z * vector.z
+    static invert(vector) {
+        vector.x = -vector.x
+        vector.y = -vector.y
+        vector.z = -vector.z
+        return vector
     }
-
-    /**
-    * @param {Vector3} vector
-    */
-    cross(vector) {
-        return new Vector3(
-            this.y * vector.z - this.z * vector.y,
-            this.z * vector.x - this.x * vector.z,
-            this.x * vector.y - this.y * vector.x,
-        )
-    }
-
     /**
     * @param {Vector3} a
     * @param {Vector3} b

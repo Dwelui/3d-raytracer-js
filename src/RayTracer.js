@@ -35,9 +35,9 @@ export default class RayTracer {
         const intersectionPoint = Vector3.add(startingPoint, Vector3.multiplyScalar(rayDirection, closestIntersection))
 
         let localColor = new Color()
-        const surfaceNormal = Vector3.subtract(intersectionPoint, closestObject.position).normalize()
+        const surfaceNormal = Vector3.normalize(Vector3.subtract(intersectionPoint, closestObject.position))
 
-        const lightStrenght = this.calculateLightStrength(intersectionPoint, surfaceNormal, closestObject.specular, rayDirection.clone().invert(), intersectionMax)
+        const lightStrenght = this.calculateLightStrength(intersectionPoint, surfaceNormal, closestObject.specular, Vector3.invert(rayDirection.clone()), intersectionMax)
         if (lightStrenght < 0) {
             throw new Error(`Light strenght is negative for object ${closestObject.toJSON()}`)
         }
@@ -48,7 +48,7 @@ export default class RayTracer {
             return localColor
         }
 
-        const reflectionDirection = this.reflectRay(rayDirection.clone().invert(), surfaceNormal)
+        const reflectionDirection = this.reflectRay(Vector3.invert(rayDirection.clone()), surfaceNormal)
         let reflectionColor = this.traceRay(intersectionPoint, reflectionDirection, 0.0001, intersectionMax, recursionDepth - 1)
         if (reflectionColor === null) {
             return localColor
@@ -133,7 +133,7 @@ export default class RayTracer {
     reflectRay(rayDirection, surfaceNormalDirection) {
         surfaceNormalDirection = surfaceNormalDirection.clone()
 
-        return surfaceNormalDirection.multiplyScalar(surfaceNormalDirection.dot(rayDirection) * 2).subtract(rayDirection)
+        return Vector3.subtract(Vector3.multiplyScalar(surfaceNormalDirection, Vector3.dot(surfaceNormalDirection, rayDirection) * 2), rayDirection)
     }
 
     /**

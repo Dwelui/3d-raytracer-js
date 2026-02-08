@@ -1,7 +1,7 @@
 export default class Vector3 {
-    /** @type{number} */ #x
-    /** @type{number} */ #y
-    /** @type{number} */ #z
+    /** @type{number} */ x
+    /** @type{number} */ y
+    /** @type{number} */ z
 
     constructor(x = 0, y = 0, z = 0) {
         this.x = x
@@ -9,16 +9,7 @@ export default class Vector3 {
         this.z = z
     }
 
-    get x() { return this.#x }
-    set x(number) { this.#x = number }
-
-    get y() { return this.#y }
-    set y(number) { this.#y = number }
-
-    get z() { return this.#z }
-    set z(number) { this.#z = number }
-
-    get magnitude() { return Math.sqrt(this.#x * this.#x + this.#y * this.#y + this.#z * this.#z) }
+    get magnitude() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z) }
 
     normalize() {
         const mag = this.magnitude
@@ -33,7 +24,7 @@ export default class Vector3 {
         return this
     }
 
-    clone() { return new Vector3(this.#x, this.#y, this.#z) }
+    clone() { return new Vector3(this.x, this.y, this.z) }
 
     toJSON() {
         return {
@@ -62,9 +53,9 @@ export default class Vector3 {
     * @param {number} number
     */
     multiplyScalar(number) {
-        this.#x *= number
-        this.#y *= number
-        this.#z *= number
+        this.x *= number
+        this.y *= number
+        this.z *= number
 
         return this
     }
@@ -75,9 +66,9 @@ export default class Vector3 {
     * @param {Vector3} vector
     */
     add(vector) {
-        this.#x += vector.x
-        this.#y += vector.y
-        this.#z += vector.z
+        this.x += vector.x
+        this.y += vector.y
+        this.z += vector.z
 
         return this
     }
@@ -88,16 +79,16 @@ export default class Vector3 {
     * @param {Vector3} vector
     */
     subtract(vector) {
-        this.#x -= vector.x
-        this.#y -= vector.y
-        this.#z -= vector.z
+        this.x -= vector.x
+        this.y -= vector.y
+        this.z -= vector.z
 
         return this
     }
 
     /** @param {Vector3} vector */
     dot(vector) {
-        return this.#x * vector.x + this.#y * vector.y + this.#z * vector.z
+        return this.x * vector.x + this.y * vector.y + this.z * vector.z
     }
 
     /**
@@ -105,9 +96,9 @@ export default class Vector3 {
     */
     cross(vector) {
         return new Vector3(
-            this.#y * vector.z - this.#z * vector.y,
-            this.#z * vector.x - this.#x * vector.z,
-            this.#x * vector.y - this.#y * vector.x,
+            this.y * vector.z - this.z * vector.y,
+            this.z * vector.x - this.x * vector.z,
+            this.x * vector.y - this.y * vector.x,
         )
     }
 

@@ -1,4 +1,5 @@
 import Color from "./Color.js"
+import Vector2 from "./math/Vector2.js"
 import Camera from "./object/Camera.js"
 import Scene from "./object/Scene.js"
 import Viewport from "./Viewport.js"
@@ -185,8 +186,8 @@ export default class Canvas {
     }
 
     /**
-    * @param {{x: number, y: number}} p1
-    * @param {{x: number, y: number}} p2
+    * @param {Vector2} p1
+    * @param {Vector2} p2
     * @param {Color} color
     */
     drawLine(p1, p2, color) {

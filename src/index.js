@@ -1,5 +1,6 @@
 import Canvas from "./Canvas.js"
 import Color from "./Color.js"
+import Vector2 from "./math/Vector2.js"
 import Vector3 from "./math/Vector3.js"
 import AmbientLight from "./object/AmbientLight.js"
 import Camera from "./object/Camera.js"
@@ -70,8 +71,8 @@ const canvas = new Canvas('#canvas', {
     rayTraceDrawMode: Canvas.RayTraceDrawMode.SLOW
 })
 
-canvas.drawLine({ x: -200, y: -100}, { x: 240, y: 120}, new Color())
-canvas.drawLine({ x: -50, y: -200}, { x: 60, y: 240}, new Color())
+canvas.drawLine(new Vector2(-200, -100), new Vector2(240, 120), new Color())
+canvas.drawLine(new Vector2(-50, -200), new Vector2(60, 240), new Color())
 
 // canvas.rayTrace({
 //     camera,

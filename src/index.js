@@ -70,11 +70,14 @@ const canvas = new Canvas('#canvas', {
     rayTraceDrawMode: Canvas.RayTraceDrawMode.SLOW
 })
 
-canvas.rayTrace({
-    camera,
-    viewport,
-    scene,
-    intersectionMin: viewport.distanceToCamera,
-    intersectionMax: 100,
-    recursionDepth: 3
-})
+canvas.drawLine({ x: -200, y: -100}, { x: 240, y: 120}, new Color())
+canvas.drawLine({ x: -50, y: -200}, { x: 60, y: 240}, new Color())
+
+// canvas.rayTrace({
+//     camera,
+//     viewport,
+//     scene,
+//     intersectionMin: viewport.distanceToCamera,
+//     intersectionMax: 100,
+//     recursionDepth: 3
+// })

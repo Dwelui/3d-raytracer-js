@@ -185,6 +185,64 @@ export default class Canvas {
     }
 
     /**
+    * @param {{x: number, y: number}} p1
+    * @param {{x: number, y: number}} p2
+    * @param {Color} color
+    */
+    drawLine(p1, p2, color) {
+        if (Math.abs(p2.x - p1.x) > Math.abs(p2.y - p1.y)) {
+            // Line is horizontal-ish
+            // Make sure p1.x < p2.x
+            if (p1.x > p2.x) {
+                const temp = p1
+                p1 = p2
+                p2 = temp
+            }
+
+            const ys = this.interpolate(p1.x, p1.y, p2.x, p2.y)
+            for (let x = p1.x; x <= p2.x; x++) {
+                this.putPixel(x, ys[x - p1.x], color)
+            }
+        } else {
+            // Line is vertical-ish
+            // Make sure p1.y < p2.y
+            if (p1.y > p2.y) {
+                const temp = p1
+                p1 = p2
+                p2 = temp
+            }
+
+            const xs = this.interpolate(p1.y, p1.x, p2.y, p2.x)
+            for (let y = p1.y; y <= p2.y; y++) {
+                this.putPixel(xs[y - p1.y], y, color)
+            }
+        }
+    }
+
+    /**
+    * Uses linear function to calculates dependent values from indipendent ones. i is indipendent and d is dependent.
+    * Independent values are array keys and are always integers, dependent values are the array values and are floats.
+    *
+    * @param {number} i0
+    * @param {number} d0
+    * @param {number} i1
+    * @param {number} d1
+    */
+    interpolate(i0, d0, i1, d1) {
+        if (i0 === i1) return [d0]
+
+        const result = []
+        const slope = (d1 - d0) / (i1 - i0)
+        let d = d0
+        for (let x = i0; x <= i1; x++) {
+            result.push(d)
+            d += slope
+        }
+
+        return result
+    }
+
+    /**
     * @param {number} x
     * @param {number} y
     * @param {Color} color

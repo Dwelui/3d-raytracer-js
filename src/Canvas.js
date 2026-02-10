@@ -191,11 +191,46 @@ export default class Canvas {
     * @param {Vector2} p3
     * @param {Color} color
     */
-
     drawWireframeTriangle(p1, p2, p3, color = new Color()) {
         this.drawLine(p1, p2, color)
         this.drawLine(p2, p3, color)
         this.drawLine(p3, p1, color)
+    }
+
+
+    /**
+    * @param {Vector2} p1
+    * @param {Vector2} p2
+    * @param {Vector2} p3
+    * @param {Color} color
+    */
+    drawFilledTriangle(p1, p2, p3, color = new Color()) {
+        // Sort the points so that y1 <= y2 <= y3
+        if (p2.y < p1.y) [p2, p1] = [p1, p2]
+        if (p3.y < p1.y) [p3, p1] = [p1, p3]
+        if (p3.y < p2.y) [p3, p2] = [p2, p3]
+
+        // compute x coordinates of the triangle edges
+        const x12 = this.interpolate(p1.y, p1.x, p2.y, p2.x) // short
+        const x23 = this.interpolate(p2.y, p2.x, p3.y, p3.x) // short
+        const x13 = this.interpolate(p1.y, p1.x, p3.y, p3.x) // tall
+
+        // remove dublicate value of x for y and concatenate "short" sides
+        x12.pop()
+        const x123 = [...x12, ...x23]
+
+        let xLeft = x123, xRight = x13
+        const middle = Math.floor(x13.length / 2)
+        if (x13[middle] < x123[middle]) {
+            xLeft = x13
+            xRight = x123
+        }
+
+        for (let y = p1.y; y <= p3.y; y++) {
+            for (let x = xLeft[y - p1.y]; x <= xRight[y - p1.y]; x++) {
+                this.putPixel(x, y, color)
+            }
+        }
     }
 
     /**
@@ -207,11 +242,7 @@ export default class Canvas {
         if (Math.abs(p2.x - p1.x) > Math.abs(p2.y - p1.y)) {
             // Line is horizontal-ish
             // Make sure p1.x < p2.x
-            if (p1.x > p2.x) {
-                const temp = p1
-                p1 = p2
-                p2 = temp
-            }
+            if (p1.x > p2.x) [p1, p2] = [p2, p1]
 
             const ys = this.interpolate(p1.x, p1.y, p2.x, p2.y)
             for (let x = p1.x; x <= p2.x; x++) {
@@ -220,11 +251,7 @@ export default class Canvas {
         } else {
             // Line is vertical-ish
             // Make sure p1.y < p2.y
-            if (p1.y > p2.y) {
-                const temp = p1
-                p1 = p2
-                p2 = temp
-            }
+            if (p1.y > p2.y) [p1, p2] = [p2, p1]
 
             const xs = this.interpolate(p1.y, p1.x, p2.y, p2.x)
             for (let y = p1.y; y <= p2.y; y++) {

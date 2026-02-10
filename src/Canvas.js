@@ -237,8 +237,8 @@ export default class Canvas {
         }
 
         for (let y = p1.y; y <= p3.y; y++) {
-            const xL = xLeft[y - p1.y]
-            const xR = xRight[y - p1.y]
+            const xL = Math.floor(xLeft[y - p1.y])
+            const xR = Math.floor(xRight[y - p1.y])
 
             const hSegment = this.interpolate(xL, hLeft[y - p1.y], xR, hRight[y - p1.y])
             for (let x = xL; x <= xR; x++) {

@@ -9,8 +9,9 @@ import Viewport from "./Viewport.js"
 * @typedef {Object} CanvasOptions
 * @property {number} width  - Canvas width in pixels
 * @property {number} height - Canvas height in pixels
-* @property {Canvas.RayTraceDrawMode[keyof Canvas.RayTraceDrawMode]} rayTraceDrawMode
+* @property {Canvas.RayTraceDrawMode[keyof Canvas.RayTraceDrawMode]} [rayTraceDrawMode]
 * @property {Color} backroundColor - Canvas backround color
+* @property {Viewport} viewport
 */
 
 export default class Canvas {
@@ -26,7 +27,8 @@ export default class Canvas {
         width: 0,
         height: 0,
         rayTraceDrawMode: Canvas.RayTraceDrawMode.SLOW,
-        backroundColor: new Color()
+        backroundColor: new Color(),
+        viewport: new Viewport({ width: 1, height: 1 }, 1)
     }
 
     /**
@@ -46,6 +48,7 @@ export default class Canvas {
         this.rayTraceDrawMode = options.rayTraceDrawMode ?? Canvas.RayTraceDrawMode.FASTEST
         this.width = options.width
         this.height = options.height
+        this.#options.viewport = options.viewport
     }
 
     get backroundColor() { return this.#options.backroundColor }
@@ -55,7 +58,7 @@ export default class Canvas {
 
     get rayTraceDrawMode() { return this.#options.rayTraceDrawMode }
     set rayTraceDrawMode(mode) {
-        if (!Object.values(Canvas.RayTraceDrawMode).includes(mode)) {
+        if (mode === undefined || !Object.values(Canvas.RayTraceDrawMode).includes(mode)) {
             throw new TypeError(`Parameter 'options.rayTraceDrawMode' option ${this.rayTraceDrawMode} does not exist`)
         }
 
@@ -79,7 +82,6 @@ export default class Canvas {
     /**
      * @param {Object} args
      * @param {Scene} args.scene
-     * @param {Viewport} args.viewport
      * @param {Camera} args.camera
      * @param {number} args.intersectionMin
      * @param {number} args.intersectionMax
@@ -87,7 +89,6 @@ export default class Canvas {
      */
     async rayTrace({
         scene,
-        viewport,
         camera,
         intersectionMin,
         intersectionMax,
@@ -143,7 +144,7 @@ export default class Canvas {
         const initializeRayWorker = {
             sceneJSON: scene.toJSON(),
             cameraJSON: camera.toJSON(),
-            viewportJSON: viewport.toJSON(),
+            viewportJSON: this.#options.viewport.toJSON(),
             sharedPixelBuffer,
             sharedChunkBuffer,
             sharedControlBuffer,
@@ -253,7 +254,7 @@ export default class Canvas {
     * @param {Vector2} p2
     * @param {Color} color
     */
-    drawLine(p1, p2, color) {
+    drawLine(p1, p2, color = new Color()) {
         if (Math.abs(p2.x - p1.x) > Math.abs(p2.y - p1.y)) {
             // Line is horizontal-ish
             // Make sure p1.x < p2.x
@@ -318,5 +319,25 @@ export default class Canvas {
     clear() {
         this.#context.fillStyle = this.backroundColor.hex
         this.#context.fillRect(0, 0, this.width, this.height)
+    }
+
+    /**
+    * @param {number} x
+    * @param {number} y
+    */
+    viewportToCanvas(x, y) {
+        return new Vector2(
+            x * this.width / this.#options.viewport.width,
+            y * this.height / this.#options.viewport.height
+        )
+    }
+
+    /**
+    * @param {Vector3} vertex
+    */
+    projectVertex(vertex) {
+        const d = this.#options.viewport.distanceToCamera
+
+        return this.viewportToCanvas(vertex.x * d / vertex.z, vertex.y * d / vertex.z)
     }
 }

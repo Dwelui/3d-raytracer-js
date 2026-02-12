@@ -12,7 +12,7 @@ import Viewport from "./Viewport.js"
 
 const [width, height] = [window.innerWidth, window.innerHeight]
 
-const viewport = new Viewport({ width: 100, height: 100 * height / width }, 2)
+const viewport = new Viewport({ width: 100, height: 100 * height / width }, 1)
 // const camera = new Camera({ position: new Vector3(3, 0, 1) })
 // camera.rotateY(-45)
 

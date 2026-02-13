@@ -3,6 +3,7 @@ import Vector2 from "./math/Vector2.js"
 import Vector3 from "./math/Vector3.js"
 import Camera from "./object/Camera.js"
 import Scene from "./object/Scene.js"
+import Triangle from "./render/Triangle.js"
 import Viewport from "./Viewport.js"
 
 /**
@@ -339,5 +340,35 @@ export default class Canvas {
         const d = this.#options.viewport.distanceToCamera
 
         return this.viewportToCanvas(vertex.x * d / vertex.z, vertex.y * d / vertex.z)
+    }
+
+    /**
+    * @param {Array<Vector3>} vertices
+    * @param {Array<Triangle>} triangles
+    */
+    renderObject(vertices, triangles) {
+        /** @type {Array<Vector2>} */
+        const projectedVertices = []
+        for (let vertex of vertices) {
+            projectedVertices.push(this.projectVertex(vertex))
+        }
+
+
+        for (let triangle of triangles) {
+            this.renderTriangle(triangle, projectedVertices)
+        }
+    }
+
+    /**
+    * @param {Triangle} triangle
+    * @param {Array<Vector2>} projectedVertices
+    */
+    renderTriangle(triangle, projectedVertices) {
+        this.drawWireframeTriangle(
+            projectedVertices[triangle.vertices[0]],
+            projectedVertices[triangle.vertices[1]],
+            projectedVertices[triangle.vertices[2]],
+            triangle.color
+        )
     }
 }

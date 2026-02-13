@@ -2,8 +2,9 @@ import Canvas from "./Canvas.js"
 import Color from "./Color.js"
 // import Vector2 from "./math/Vector2.js"
 import Vector3 from "./math/Vector3.js"
+import Triangle from "./render/Triangle.js"
 // import AmbientLight from "./object/AmbientLight.js"
-// import Camera from "./object/Camera.js"
+import Camera from "./object/Camera.js"
 // import DirectionalLight from "./object/DirectionalLight.js"
 // import PointLight from "./object/PointLight.js"
 // import Scene from "./object/Scene.js"
@@ -12,8 +13,8 @@ import Viewport from "./Viewport.js"
 
 const [width, height] = [window.innerWidth, window.innerHeight]
 
-const viewport = new Viewport({ width: 100, height: 100 * height / width }, 1)
-// const camera = new Camera({ position: new Vector3(3, 0, 1) })
+const viewport = new Viewport({ width: 10, height: 10 * height / width }, 1)
+const camera = new Camera({ position: new Vector3(0, 0, 0) })
 // camera.rotateY(-45)
 
 // const sphere1 = new Sphere({
@@ -71,40 +72,71 @@ const canvas = new Canvas('#canvas', {
     viewport
 })
 
-// The four "front" vertices
-const vAf = new Vector3(-1,  1, 1)
-const vBf = new Vector3( 1,  1, 1)
-const vCf = new Vector3( 1, -1, 1)
-const vDf = new Vector3(-1, -1, 1)
-
-// The four "back" vertices
-
-const vAb = new Vector3(-1,  1, 2)
-const vBb = new Vector3( 1,  1, 2)
-const vCb = new Vector3( 1, -1, 2)
-const vDb = new Vector3(-1, -1, 2)
-
 const blue = new Color(0, 0, 200)
 const red = new Color(200, 0, 0)
 const green = new Color(0, 200, 0)
+const yellow = new Color(200, 200, 0)
+const purple = new Color(200, 0, 200)
+const cyan = new Color(0, 200, 200)
 
-// The front face
-canvas.drawLine(canvas.projectVertex(vAf), canvas.projectVertex(vBf), blue)
-canvas.drawLine(canvas.projectVertex(vBf), canvas.projectVertex(vCf), blue)
-canvas.drawLine(canvas.projectVertex(vCf), canvas.projectVertex(vDf), blue)
-canvas.drawLine(canvas.projectVertex(vDf), canvas.projectVertex(vAf), blue)
+const vertices = [
+    new Vector3(1, 1, 1),
+    new Vector3(-1, 1, 1),
+    new Vector3(-1, -1, 1),
+    new Vector3(1, -1, 1),
+    new Vector3(1, 1, -1),
+    new Vector3(-1, 1, -1),
+    new Vector3(-1, -1, -1),
+    new Vector3(1, -1, -1),
+]
 
-// The back face
-canvas.drawLine(canvas.projectVertex(vAb), canvas.projectVertex(vBb), red)
-canvas.drawLine(canvas.projectVertex(vBb), canvas.projectVertex(vCb), red)
-canvas.drawLine(canvas.projectVertex(vCb), canvas.projectVertex(vDb), red)
-canvas.drawLine(canvas.projectVertex(vDb), canvas.projectVertex(vAb), red)
+const triangles = [
+    new Triangle(0, 1, 2, red),
+    new Triangle(0, 2, 3, red),
+    new Triangle(4, 0, 3, green),
+    new Triangle(4, 3, 7, green),
+    new Triangle(5, 4, 7, blue),
+    new Triangle(5, 7, 6, blue),
+    new Triangle(1, 5, 6, yellow),
+    new Triangle(1, 6, 2, yellow),
+    new Triangle(4, 5, 1, purple),
+    new Triangle(4, 1, 0, purple),
+    new Triangle(2, 6, 7, cyan),
+    new Triangle(2, 7, 3, cyan),
+]
 
-// The front-to-back edges
-canvas.drawLine(canvas.projectVertex(vAf), canvas.projectVertex(vAb), green)
-canvas.drawLine(canvas.projectVertex(vBf), canvas.projectVertex(vBb), green)
-canvas.drawLine(canvas.projectVertex(vCf), canvas.projectVertex(vCb), green)
-canvas.drawLine(canvas.projectVertex(vDf), canvas.projectVertex(vDb), green)
+canvas.renderObject(vertices, triangles)
+
+// // The four "front" vertices
+// const vAf = new Vector3(-1,  1, 1)
+// const vBf = new Vector3( 1,  1, 1)
+// const vCf = new Vector3( 1, -1, 1)
+// const vDf = new Vector3(-1, -1, 1)
+//
+// // The four "back" vertices
+//
+// const vAb = new Vector3(-1,  1, 2)
+// const vBb = new Vector3( 1,  1, 2)
+// const vCb = new Vector3( 1, -1, 2)
+// const vDb = new Vector3(-1, -1, 2)
+//
+// // The front face
+// canvas.drawLine(canvas.projectVertex(vAf), canvas.projectVertex(vBf), blue)
+// canvas.drawLine(canvas.projectVertex(vBf), canvas.projectVertex(vCf), blue)
+// canvas.drawLine(canvas.projectVertex(vCf), canvas.projectVertex(vDf), blue)
+// canvas.drawLine(canvas.projectVertex(vDf), canvas.projectVertex(vAf), blue)
+//
+// // The back face
+// canvas.drawLine(canvas.projectVertex(vAb), canvas.projectVertex(vBb), red)
+// canvas.drawLine(canvas.projectVertex(vBb), canvas.projectVertex(vCb), red)
+// canvas.drawLine(canvas.projectVertex(vCb), canvas.projectVertex(vDb), red)
+// canvas.drawLine(canvas.projectVertex(vDb), canvas.projectVertex(vAb), red)
+//
+// // The front-to-back edges
+// canvas.drawLine(canvas.projectVertex(vAf), canvas.projectVertex(vAb), green)
+// canvas.drawLine(canvas.projectVertex(vBf), canvas.projectVertex(vBb), green)
+// canvas.drawLine(canvas.projectVertex(vCf), canvas.projectVertex(vCb), green)
+// canvas.drawLine(canvas.projectVertex(vDf), canvas.projectVertex(vDb), green)
 
 // canvas.drawLine(new Vector2(-200, -100), new Vector2(240, 120), new Color())
 // canvas.drawLine(new Vector2(-50, -200), new Vector2(60, 240), new Color())

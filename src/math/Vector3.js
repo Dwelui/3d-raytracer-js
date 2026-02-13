@@ -19,6 +19,13 @@ export default class Vector3 {
 
     toArray() { return [this.x, this.y, this.z] }
 
+    /** @param {Vector3} v */
+    add(v) {
+        this.x += v.x
+        this.y += v.y
+        this.z += v.z
+    }
+
     /**
     * @param {{
     *       x?: number,
@@ -50,6 +57,7 @@ export default class Vector3 {
         vector.z = -vector.z
         return vector
     }
+
     /**
     * @param {Vector3} a
     * @param {Vector3} b

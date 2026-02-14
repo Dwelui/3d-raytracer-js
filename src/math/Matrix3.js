@@ -119,6 +119,17 @@ export default class Matrix3 {
         ])
     }
 
+    /** @param {Matrix3} matrix */
+    static transpose(matrix) {
+        const c = matrix.#components
+
+        return new Matrix3([
+            c[0], c[3], c[6],
+            c[1], c[4], c[7],
+            c[2], c[5], c[8],
+        ])
+    }
+
     /**
     * @param {Matrix3} a
     * @param {Matrix3} b

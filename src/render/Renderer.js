@@ -1,19 +1,24 @@
 import Canvas from "../Canvas.js"
+import Matrix3 from "../math/Matrix3.js"
 import Vector2 from "../math/Vector2.js"
+import Camera from "../object/Camera.js"
 import Object3D from "../object/Object3D.js"
 import Scene from "../object/Scene.js"
 import Triangle from "./Triangle.js"
 import Vertex from "./Vertex.js"
 
 export default class Renderer {
-    /** @type {Canvas} canvas */ #canvas
+    /** @type {Canvas} */ #canvas
+    /** @type {Camera} */ #camera
 
     /**
     * @param {Object} args
     * @param {Canvas} args.canvas
+    * @param {Camera} args.camera
     */
-    constructor({ canvas }) {
+    constructor({ canvas, camera }) {
         this.#canvas = canvas
+        this.#camera = camera
     }
 
     /**
@@ -35,8 +40,9 @@ export default class Renderer {
         /** @type {Array<Vector2>} */
         const projectedVertices = []
         for (const vertex of mesh.vertices) {
-            const transformedVertex = this.applyTransform(vertex, object)
-            projectedVertices.push(this.#canvas.projectVertex(transformedVertex))
+            const transformedVertex = this.applyTransform(vertex.clone(), object)
+            const cameraSpaceVertex = this.applyCameraSpaceTransform(transformedVertex)
+            projectedVertices.push(this.#canvas.projectVertex(cameraSpaceVertex))
         }
 
         for (let triangle of mesh.triangles) {
@@ -62,10 +68,19 @@ export default class Renderer {
     * @param {Object3D} object
     */
     applyTransform(vertex, object) {
-        vertex = vertex.clone()
         vertex.position.multiplyScalar(object.scale)
         vertex.position.multiplyMatrix3(object.rotation)
         vertex.position.add(object.position)
+
+        return vertex
+    }
+
+    /**
+    * @param {Vertex} vertex
+    */
+    applyCameraSpaceTransform(vertex) {
+        vertex.position.multiplyMatrix3(Matrix3.transpose(this.#camera.rotation))
+        vertex.position.subtract(this.#camera.position)
 
         return vertex
     }

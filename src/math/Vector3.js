@@ -28,6 +28,13 @@ export default class Vector3 {
         this.z += vector.z
     }
 
+    /** @param {Vector3} vector */
+    subtract(vector) {
+        this.x -= vector.x
+        this.y -= vector.y
+        this.z -= vector.z
+    }
+
     /** @param {number} number */
     multiplyScalar(number) {
         this.x *= number

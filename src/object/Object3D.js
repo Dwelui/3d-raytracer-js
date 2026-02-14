@@ -17,7 +17,7 @@ export default class Object3D {
     * @param {number} [args.scale]
     * @param {Mesh} [args.mesh]
     */
-    constructor({ position, rotation, scale, mesh }) {
+    constructor({ position, rotation, scale, mesh } = {}) {
         this.#position = position ?? new Vector3()
         this.#rotation = rotation ?? Matrix3.identity()
         this.#scale = scale ?? 1

@@ -1,4 +1,5 @@
 import Canvas from "../Canvas.js"
+import Matrix3 from "../math/Matrix3.js"
 import Vector2 from "../math/Vector2.js"
 import Object3D from "../object/Object3D.js"
 import Scene from "../object/Scene.js"
@@ -35,9 +36,7 @@ export default class Renderer {
         /** @type {Array<Vector2>} */
         const projectedVertices = []
         for (const vertex of mesh.vertices) {
-            console.log('Before: ', vertex.toJSON())
             const transformedVertex = this.applyTransform(vertex, object)
-            console.log('After: ', transformedVertex.toJSON())
             projectedVertices.push(this.#canvas.projectVertex(transformedVertex))
         }
 
@@ -66,6 +65,7 @@ export default class Renderer {
     applyTransform(vertex, object) {
         vertex = vertex.clone()
         vertex.position.multiplyScalar(object.scale)
+        vertex.position = Matrix3.multiplyVector3(object.rotation, vertex.position)
         vertex.position.add(object.position)
 
         return vertex

@@ -17,6 +17,7 @@ const canvas = new Canvas('#canvas', {
 })
 
 const box = new Box()
+box.translate(new Vector3(-1.5, 0, 7))
 
 console.log(box)
 

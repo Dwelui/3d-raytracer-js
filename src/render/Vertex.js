@@ -9,4 +9,10 @@ export default class Vertex {
     constructor(position) {
         this.position = position ?? new Vector3()
     }
+
+    toJSON() {
+        return {
+            Position: this.position.toJSON()
+        }
+    }
 }

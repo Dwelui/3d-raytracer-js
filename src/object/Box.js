@@ -71,7 +71,7 @@ export default class Box extends Object3D {
 
     updateMesh() {
         if (this.mesh.vertices.length !== 8) {
-            this.mesh.vertices = Array(8).fill(new Vertex(), 0, 8)
+            this.mesh.vertices = Array(8).fill(null).map(() => new Vertex())
         }
 
         const vertices = this.mesh.vertices
@@ -92,7 +92,7 @@ export default class Box extends Object3D {
         vertices[6].position = new Vector3(-x, -y, -z)
         vertices[7].position = new Vector3(x, -y, -z)
 
-        for (const vertex of vertices) {
+        for (let vertex of vertices) {
             vertex.position.add(this.position)
         }
     }

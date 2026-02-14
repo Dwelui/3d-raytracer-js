@@ -9,7 +9,7 @@ import Viewport from "./Viewport.js"
 
 const [width, height] = [window.innerWidth, window.innerHeight]
 
-const viewport = new Viewport({ width: 1, height: 1 * height / width }, 1)
+const viewport = new Viewport({ width: 2, height: 2 * height / width }, 1)
 
 const canvas = new Canvas('#canvas', {
     width,
@@ -22,6 +22,7 @@ const mesh = new BoxMesh()
 const scene = new Scene()
 scene.add(new Object3D({
     mesh,
+    scale: 2,
     position: new Vector3(0, 0, 5)
 }))
 scene.add(new Object3D({

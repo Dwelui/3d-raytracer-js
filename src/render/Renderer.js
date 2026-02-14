@@ -3,6 +3,7 @@ import Vector2 from "../math/Vector2.js"
 import Object3D from "../object/Object3D.js"
 import Scene from "../object/Scene.js"
 import Triangle from "./Triangle.js"
+import Vertex from "./Vertex.js"
 
 export default class Renderer {
     /** @type {Canvas} canvas */ #canvas
@@ -34,9 +35,10 @@ export default class Renderer {
         /** @type {Array<Vector2>} */
         const projectedVertices = []
         for (const vertex of mesh.vertices) {
-            const vertexTranslated = vertex.clone()
-            vertexTranslated.position.add(object.position)
-            projectedVertices.push(this.#canvas.projectVertex(vertexTranslated))
+            console.log('Before: ', vertex.toJSON())
+            const transformedVertex = this.applyTransform(vertex, object)
+            console.log('After: ', transformedVertex.toJSON())
+            projectedVertices.push(this.#canvas.projectVertex(transformedVertex))
         }
 
         for (let triangle of mesh.triangles) {
@@ -55,5 +57,17 @@ export default class Renderer {
             projectedVertices[triangle.vertices[2]],
             triangle.color
         )
+    }
+
+    /**
+    * @param {Vertex} vertex
+    * @param {Object3D} object
+    */
+    applyTransform(vertex, object) {
+        vertex = vertex.clone()
+        vertex.position.multiplyScalar(object.scale)
+        vertex.position.add(object.position)
+
+        return vertex
     }
 }

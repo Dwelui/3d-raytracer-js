@@ -19,11 +19,18 @@ export default class Vector3 {
 
     toArray() { return [this.x, this.y, this.z] }
 
-    /** @param {Vector3} v */
-    add(v) {
-        this.x += v.x
-        this.y += v.y
-        this.z += v.z
+    /** @param {Vector3} vector */
+    add(vector) {
+        this.x += vector.x
+        this.y += vector.y
+        this.z += vector.z
+    }
+
+    /** @param {number} number */
+    multiplyScalar(number) {
+        this.x *= number
+        this.y *= number
+        this.z *= number
     }
 
     /**

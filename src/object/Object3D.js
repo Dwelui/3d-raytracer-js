@@ -7,17 +7,20 @@ export default class Object3D {
 
     /** @type{Vector3} */ #position
     /** @type{Matrix3} */ #rotation
+    /** @type{number} */ #scale
     /** @type{Mesh|undefined} */ #mesh
 
     /**
     * @param {Object} args
     * @param {Vector3} [args.position]
     * @param {Matrix3} [args.rotation]
+    * @param {number} [args.scale]
     * @param {Mesh} [args.mesh]
     */
-    constructor({ position, rotation, mesh }) {
+    constructor({ position, rotation, scale, mesh }) {
         this.#position = position ?? new Vector3()
         this.#rotation = rotation ?? Matrix3.identity()
+        this.#scale = scale ?? 1
 
         if (mesh !== undefined) {
             this.#mesh = mesh
@@ -31,6 +34,9 @@ export default class Object3D {
 
     get rotation() { return this.#rotation }
     set rotation(rotation) { this.#rotation = rotation }
+
+    get scale() { return this.#scale }
+    set scale(units) { this.#scale = units }
 
     get mesh() { return this.#mesh }
     set mesh(mesh) { this.#mesh = mesh }

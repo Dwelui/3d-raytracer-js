@@ -17,6 +17,6 @@ export default class Vertex {
     }
 
     clone() {
-        return new Vertex(this.position)
+        return new Vertex(this.position.clone())
     }
 }

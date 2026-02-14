@@ -4,6 +4,7 @@ import Vector3 from "./math/Vector3.js"
 import Camera from "./object/Camera.js"
 import Scene from "./object/Scene.js"
 import Triangle from "./render/Triangle.js"
+import Vertex from "./render/Vertex.js"
 import Viewport from "./Viewport.js"
 
 /**
@@ -334,16 +335,17 @@ export default class Canvas {
     }
 
     /**
-    * @param {Vector3} vertex
+    * @param {Vertex} vertex
     */
     projectVertex(vertex) {
         const d = this.#options.viewport.distanceToCamera
+        const position = vertex.position
 
-        return this.viewportToCanvas(vertex.x * d / vertex.z, vertex.y * d / vertex.z)
+        return this.viewportToCanvas(position.x * d / position.z, position.y * d / position.z)
     }
 
     /**
-    * @param {Array<Vector3>} vertices
+    * @param {Array<Vertex>} vertices
     * @param {Array<Triangle>} triangles
     */
     renderObject(vertices, triangles) {

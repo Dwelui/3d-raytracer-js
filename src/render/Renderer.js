@@ -1,5 +1,4 @@
 import Canvas from "../Canvas.js"
-import Matrix3 from "../math/Matrix3.js"
 import Vector2 from "../math/Vector2.js"
 import Object3D from "../object/Object3D.js"
 import Scene from "../object/Scene.js"

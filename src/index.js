@@ -11,10 +11,10 @@ import Viewport from "./Viewport.js"
 const [width, height] = [window.innerWidth, window.innerHeight]
 const viewport = new Viewport({ width: 2, height: 2 * height / width }, 1)
 const camera = new Camera({
-    position: new Vector3(0, 0, -2)
+    position: new Vector3(0, 0, -3)
 })
 
-camera.rotateY(15)
+camera.rotateY(25)
 
 const canvas = new Canvas('#canvas', {
     width,

@@ -5,6 +5,8 @@ import Triangle from "./Triangle.js";
 import Vertex from "./Vertex.js";
 
 export default class BoxMesh extends Mesh {
+    /** @type {string} */ type = "BoxMesh"
+
     /** @type {number} */ #width
     /** @type {number} */ #height
     /** @type {number} */ #length
@@ -22,7 +24,7 @@ export default class BoxMesh extends Mesh {
         this.#height = height
         this.#length = length
 
-        this.updateMesh()
+        this.update()
 
         const blue = new Color(0, 0, 200)
         const red = new Color(200, 0, 0)
@@ -47,10 +49,16 @@ export default class BoxMesh extends Mesh {
         ]
     }
 
-    /**
-    * @param {Vector3} [position]
-    */
-    updateMesh(position) {
+    get width() { return this.#width }
+    set width(units) { this.#width = units; this.update() }
+
+    get height() { return this.#height }
+    set height(units) { this.#height = units; this.update() }
+
+    get length() { return this.#length }
+    set length(units) { this.#length = units; this.update() }
+
+    update() {
         if (this.vertices.length !== 8) {
             this.vertices = Array(8).fill(null).map(() => new Vertex())
         }
@@ -72,11 +80,5 @@ export default class BoxMesh extends Mesh {
         vertices[5].position = new Vector3(-x, y, -z)
         vertices[6].position = new Vector3(-x, -y, -z)
         vertices[7].position = new Vector3(x, -y, -z)
-
-        if (position !== undefined) {
-            for (let vertex of vertices) {
-                vertex.position.add(position)
-            }
-        }
     }
 }

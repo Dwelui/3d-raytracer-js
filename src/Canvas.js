@@ -2,6 +2,7 @@ import Color from "./Color.js"
 import Vector2 from "./math/Vector2.js"
 import Vector3 from "./math/Vector3.js"
 import Camera from "./object/Camera.js"
+import Object3D from "./object/Object3D.js"
 import Scene from "./object/Scene.js"
 import Triangle from "./render/Triangle.js"
 import Vertex from "./render/Vertex.js"
@@ -345,18 +346,18 @@ export default class Canvas {
     }
 
     /**
-    * @param {Array<Vertex>} vertices
-    * @param {Array<Triangle>} triangles
+    * @param {Object3D} object
     */
-    renderObject(vertices, triangles) {
+    renderObject(object) {
+        if (! object.mesh) return
+
         /** @type {Array<Vector2>} */
         const projectedVertices = []
-        for (let vertex of vertices) {
+        for (let vertex of object.mesh.vertices) {
             projectedVertices.push(this.projectVertex(vertex))
         }
 
-
-        for (let triangle of triangles) {
+        for (let triangle of object.mesh.triangles) {
             this.renderTriangle(triangle, projectedVertices)
         }
     }

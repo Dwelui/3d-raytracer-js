@@ -7,7 +7,7 @@ export default class Object3D {
 
     /** @type{Vector3} */ #position
     /** @type{Matrix3} */ #rotation
-    /** @type{Mesh} */ #mesh
+    /** @type{Mesh|undefined} */ #mesh
 
     /**
     * @param {Object} args
@@ -16,13 +16,18 @@ export default class Object3D {
     * @param {Mesh} [args.mesh]
     */
     constructor({ position, rotation, mesh }) {
-        this.position = position ?? new Vector3()
-        this.rotation = rotation ?? Matrix3.identity()
-        this.mesh = mesh ?? new Mesh()
+        this.#position = position ?? new Vector3()
+        this.#rotation = rotation ?? Matrix3.identity()
+
+        if (mesh !== undefined) {
+            this.#mesh = mesh
+        }
     }
 
     get position() { return this.#position }
-    set position(position) { this.#position = position }
+    set position(position) {
+        this.#position = position
+    }
 
     get rotation() { return this.#rotation }
     set rotation(rotation) { this.#rotation = rotation }
@@ -55,11 +60,8 @@ export default class Object3D {
     * @param {Vector3} vector
     */
     translate(vector) {
-        this.position.add(vector)
-        this.updateMesh()
+        this.#position.add(vector)
     }
-
-    updateMesh() { }
 
     /** @param {number} degress */
     rotateX(degress) {

@@ -46,10 +46,11 @@ export default class Box extends Object3D {
     }
 
     updateMesh() {
-        const vertices = this.mesh.vertices
-        if (vertices.length !== 8) {
-            vertices.fill(new Vertex(), 0, 8)
+        if (this.mesh.vertices.length !== 8) {
+            this.mesh.vertices = Array(8).fill(new Vertex(), 0, 8)
         }
+
+        const vertices = this.mesh.vertices
 
         const x = this.width / 2
         const y = this.height / 2

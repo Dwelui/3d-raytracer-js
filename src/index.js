@@ -18,6 +18,8 @@ const canvas = new Canvas('#canvas', {
 
 const box = new Box()
 
+console.log(box)
+
 const blue = new Color(0, 0, 200)
 const red = new Color(200, 0, 0)
 const green = new Color(0, 200, 0)

@@ -1,5 +1,5 @@
 {
-    "name": "3Dlib",
+    "name": "3d-lib",
     "version": "1.0.0",
     "description": "naive implementation of 3d in javascript",
     "keywords": [
@@ -12,6 +12,6 @@
     "type": "module",
     "main": "src/index.js",
     "scripts": {
-        "serve": "npx serve -c serve.json"
+        "dev": "npx serve -c serve.json"
     }
 }

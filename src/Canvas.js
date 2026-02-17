@@ -2,7 +2,10 @@ import Color from "./Color.js"
 import Vector2 from "./math/Vector2.js"
 import Vector3 from "./math/Vector3.js"
 import Camera from "./object/Camera.js"
+import Object3D from "./object/Object3D.js"
 import Scene from "./object/Scene.js"
+import Triangle from "./render/Triangle.js"
+import Vertex from "./render/Vertex.js"
 import Viewport from "./Viewport.js"
 
 /**
@@ -322,6 +325,16 @@ export default class Canvas {
     }
 
     /**
+    * @param {Vertex} vertex
+    */
+    projectVertex(vertex) {
+        const d = this.#options.viewport.distanceToCamera
+        const position = vertex.position
+
+        return this.viewportToCanvas(position.x * d / position.z, position.y * d / position.z)
+    }
+
+    /**
     * @param {number} x
     * @param {number} y
     */
@@ -330,14 +343,5 @@ export default class Canvas {
             x * this.width / this.#options.viewport.width,
             y * this.height / this.#options.viewport.height
         )
-    }
-
-    /**
-    * @param {Vector3} vertex
-    */
-    projectVertex(vertex) {
-        const d = this.#options.viewport.distanceToCamera
-
-        return this.viewportToCanvas(vertex.x * d / vertex.z, vertex.y * d / vertex.z)
     }
 }

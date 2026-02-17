@@ -1,27 +1,45 @@
 import Matrix3 from "../math/Matrix3.js";
 import Vector3 from "../math/Vector3.js";
+import Mesh from "../render/Mesh.js";
 
 export default class Object3D {
     /** @type {string} */ type = "Object3D"
 
     /** @type{Vector3} */ #position
     /** @type{Matrix3} */ #rotation
+    /** @type{number} */ #scale
+    /** @type{Mesh|undefined} */ #mesh
 
     /**
     * @param {Object} args
-    * @param {Vector3} args.position
+    * @param {Vector3} [args.position]
     * @param {Matrix3} [args.rotation]
+    * @param {number} [args.scale]
+    * @param {Mesh} [args.mesh]
     */
-    constructor({ position, rotation }) {
-        this.position = position
-        this.rotation = rotation ?? Matrix3.identity()
+    constructor({ position, rotation, scale, mesh } = {}) {
+        this.#position = position ?? new Vector3()
+        this.#rotation = rotation ?? Matrix3.identity()
+        this.#scale = scale ?? 1
+
+        if (mesh !== undefined) {
+            this.#mesh = mesh
+        }
     }
 
     get position() { return this.#position }
-    set position(position) { this.#position = position }
+    set position(position) {
+        this.#position = position
+    }
 
     get rotation() { return this.#rotation }
     set rotation(rotation) { this.#rotation = rotation }
+
+    get scale() { return this.#scale }
+    set scale(units) { this.#scale = units }
+
+    get mesh() { return this.#mesh }
+    set mesh(mesh) { this.#mesh = mesh }
 
     toJSON() {
         return {
@@ -44,19 +62,11 @@ export default class Object3D {
         })
     }
 
-    /** @param {number} units */
-    translateX(units) {
-        this.position.x += units
-    }
-
-    /** @param {number} units */
-    translateY(units) {
-        this.position.y += units
-    }
-
-    /** @param {number} units */
-    translateZ(units) {
-        this.position.z += units
+    /**
+    * @param {Vector3} vector
+    */
+    translate(vector) {
+        this.#position.add(vector)
     }
 
     /** @param {number} degress */
@@ -72,6 +82,8 @@ export default class Object3D {
         ])
 
         this.rotation = Matrix3.multiplyMatrix3(this.rotation, rotationMatrix)
+
+        return this
     }
 
     /** @param {number} degress */
@@ -87,6 +99,8 @@ export default class Object3D {
         ])
 
         this.rotation = Matrix3.multiplyMatrix3(this.rotation, rotationMatrix)
+
+        return this
     }
 
     /** @param {number} degress */
@@ -102,5 +116,6 @@ export default class Object3D {
         ])
 
         this.rotation = Matrix3.multiplyMatrix3(this.rotation, rotationMatrix)
+
     }
 }

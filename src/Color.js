@@ -68,7 +68,6 @@ export default class Color {
     * Mutates vector
     *
     * @param {number} number
-    * @deprecated use static version.
     */
     multiplyScalar(number) {
         this.#components[0] *= number

@@ -21,16 +21,16 @@ export default class Scene extends Object3D {
     get objects() { return this.#objects }
 
     /**
-     * @overload
-     * @param {Object3D} object
-     * @return Scene
-     *
-     * @overload
-     * @param {Array<Object3D>} objects
-     * @return Scene
-     *
-     * @param {Array<Object3D>|Object3D} args
-     */
+    * @overload
+    * @param {Object3D} object
+    * @return Scene
+    *
+    * @overload
+    * @param {Array<Object3D>} objects
+    * @return Scene
+    *
+    * @param {Array<Object3D>|Object3D} args
+    */
     add(args) {
         if (Array.isArray(args)) {
             for (const object of args) {
@@ -39,7 +39,7 @@ export default class Scene extends Object3D {
         }
 
         if (args instanceof Object3D) {
-                this.#objects.push(args)
+            this.#objects.push(args)
         }
 
         return this

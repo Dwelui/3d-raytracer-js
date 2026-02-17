@@ -30,7 +30,7 @@ export default class Scene extends Object3D {
      * @return Scene
      *
      * @param {Array<Object3D>|Object3D} args
-    */
+     */
     add(args) {
         if (Array.isArray(args)) {
             for (const object of args) {

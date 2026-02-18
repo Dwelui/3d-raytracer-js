@@ -231,7 +231,7 @@ export default class Canvas {
 
         let xLeft = x123, xRight = x13
         let hLeft = h123, hRight = h13
-        const middle = Math.floor(x13.length / 2)
+        const middle = x13.length / 2 | 0
         if (x13[middle] < x123[middle]) {
             xLeft = x13
             hLeft = h13
@@ -241,8 +241,8 @@ export default class Canvas {
         }
 
         for (let y = p1.y; y <= p3.y; y++) {
-            const xL = Math.floor(xLeft[y - p1.y])
-            const xR = Math.floor(xRight[y - p1.y])
+            const xL = xLeft[y - p1.y] | 0
+            const xR = xRight[y - p1.y] | 0
 
             const hSegment = this.interpolate(xL, hLeft[y - p1.y], xR, hRight[y - p1.y])
             for (let x = xL; x <= xR; x++) {
@@ -310,10 +310,8 @@ export default class Canvas {
     * @param {Color} color
     */
     putPixel(x, y, color) {
-        x += this.width / 2
-        y = this.height / 2 - y
-        x = Math.round(x)
-        y = Math.round(y)
+        x = x + this.width / 2 | 0
+        y = this.height / 2 - y | 0
 
         if (x < 0 || x > this.width || y < 0 || y > this.height) console.warn(`pixel is out of bounds: ${x} ${y}`);
 
